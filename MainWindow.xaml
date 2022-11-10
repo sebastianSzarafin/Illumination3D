@@ -1,0 +1,65 @@
+﻿<Window x:Class="WpfApp1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp1"
+        mc:Ignorable="d"
+        Title="MainWindow" ResizeMode="NoResize" Height="616" Width="800">
+    <Window.Resources>
+        <local:PositionConverter x:Key="positionConverter"/>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="1"/>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <Rectangle HorizontalAlignment="Stretch" Fill="Black" Grid.Column="1"/>
+
+        <Canvas x:Name="canvas" Grid.Column="2" Background="Black" Height="600" Width="600"/>
+
+        <ScrollViewer HorizontalScrollBarVisibility="Auto">
+            <StackPanel Background="AliceBlue" Grid.Row="0" Grid.Column="0" CanVerticallyScroll="True">
+                <Button Height="50" Margin="10" Click="LoadFileEvent">Load file</Button>
+                <RadioButton IsChecked="True" Margin="0 0 0 8" HorizontalAlignment="Center" Click="XY_AxisProjEvent">XY axis proj.</RadioButton>
+                <RadioButton Margin="0 0 0 8" HorizontalAlignment="Center" Click="XZ_AxisProjEvent">XZ axis proj.</RadioButton>
+
+                <Separator/>
+
+                <DockPanel VerticalAlignment="Center" Margin="10">
+                    <Label DockPanel.Dock="Left" FontWeight="Bold">kd:</Label>
+                    <TextBox Text="{Binding ElementName=kdSlider, Path=Value, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" DockPanel.Dock="Right" TextAlignment="Center" VerticalAlignment="Center" Width="40" />
+                    <Slider Maximum="1" Minimum="0" Value="0.5" VerticalAlignment="Center" TickFrequency="0.01" IsSnapToTickEnabled="True" Name="kdSlider" ValueChanged="kdSlider_ValueChanged" />
+                </DockPanel>
+                <DockPanel VerticalAlignment="Center" Margin="10">
+                    <Label DockPanel.Dock="Left" FontWeight="Bold">ks:</Label>
+                    <TextBox Text="{Binding ElementName=ksSlider, Path=Value, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" DockPanel.Dock="Right" TextAlignment="Center" VerticalAlignment="Center" Width="40" />
+                    <Slider Maximum="1" Minimum="0" Value="0.5" VerticalAlignment="Center" TickFrequency="0.01" IsSnapToTickEnabled="True" Name="ksSlider" ValueChanged="ksSlider_ValueChanged" />
+                </DockPanel>
+                <DockPanel VerticalAlignment="Center" Margin="10">
+                    <Label DockPanel.Dock="Left" FontWeight="Bold">m:</Label>
+                    <TextBox Text="{Binding ElementName=mSlider, Path=Value, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}" DockPanel.Dock="Right" TextAlignment="Center" VerticalAlignment="Center" Width="40" />
+                    <Slider Maximum="100" Minimum="1" Value="50" VerticalAlignment="Center" TickFrequency="1" IsSnapToTickEnabled="True" Name="mSlider" ValueChanged="mSlider_ValueChanged" />
+                </DockPanel>
+
+                <Separator/>
+
+                <Label Content="Sun simulation:"/>
+                <Button x:Name="sunSimulationButton" Height="20" Width="100" Margin="10" Click="SunSimulationEvent">Start simulation</Button>
+                <DockPanel VerticalAlignment="Center" Margin="10">
+                    <Label DockPanel.Dock="Left" FontWeight="Bold">sun-z:</Label>
+                    <TextBox Text="{Binding ElementName=zSlider, Path=Value, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}" DockPanel.Dock="Right" TextAlignment="Center" VerticalAlignment="Center" Width="40" />
+                    <Slider Maximum="3000" Minimum="500"  Value="1000" VerticalAlignment="Center" TickFrequency="100" IsSnapToTickEnabled="True" Name="zSlider" ValueChanged="zSlider_ValueChanged" />
+                </DockPanel>
+
+                <Separator/>
+
+            
+
+            </StackPanel>
+
+        </ScrollViewer>
+    </Grid>
+</Window>
