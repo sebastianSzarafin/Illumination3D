@@ -18,7 +18,7 @@ using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 //using static System.Net.Mime.MediaTypeNames;
-using static WpfApp1.ObjParser;
+//using static WpfApp1.ObjParser;
 
 namespace WpfApp1
 {
@@ -36,36 +36,39 @@ namespace WpfApp1
 
     public partial class MainWindow : Window
     {
-        ObjParser? objParser;
+        //ObjParser? objParser;
+        static Drawer drawer = new Drawer(0.5, 0.5, 50);
+        static Sun sun = new Sun(Color.FromRgb(255, 255, 255), Drawer.objWidth / 2 + Drawer.offsetX, Drawer.objHeight / 2 + Drawer.offsetY, 1000, drawer);
         public Projection projection = Projection.XY;
         public enum Projection { XY, XZ };
-        double kd = 0.5, ks = 0.5;
-        int m = 50;
-        Color sunColor = Color.FromRgb(255, 255, 255);
-        double x_bigSun = objWidth / 2 + offsetX, y_bigSun = objHeight / 2 + offsetY, z_bigSun = 1000;
-        static int bitmapWidth = 600, bitmapHeight = 600;
-        static int objWidth = 500, objHeight = 500;
-        static int offsetX = (bitmapWidth - objWidth) / 2, offsetY = (bitmapHeight - objHeight) / 2;
-        WriteableBitmap bitmap = new WriteableBitmap(bitmapWidth, bitmapHeight, 96, 96, PixelFormats.Bgra32, null);
+        //double kd = 0.5, ks = 0.5;
+        //int m = 50;
+        //Color sunColor = Color.FromRgb(255, 255, 255);
+        //double x_bigSun = objWidth / 2 + offsetX, y_bigSun = objHeight / 2 + offsetY, z_bigSun = 1000
+        //public static int bitmapWidth = 600, bitmapHeight = 600;
+        //static int objWidth = 500, objHeight = 500;
+        //static int offsetX = (bitmapWidth - objWidth) / 2, offsetY = (bitmapHeight - objHeight) / 2;
+        /*WriteableBitmap bitmap = new WriteableBitmap(bitmapWidth, bitmapHeight, 96, 96, PixelFormats.Bgra32, null);
         byte[,,] pixels = new byte[bitmapHeight, bitmapWidth, 4];
         byte[] pixels1d = new byte[bitmapHeight * bitmapWidth * 4];
         Int32Rect rect = new Int32Rect(0, 0, bitmapWidth, bitmapHeight);
         int stride = 4 * bitmapWidth;
-        Image bitmapImage = new Image();
-        static DispatcherTimer sunTimer = new DispatcherTimer();
-        List<(int x, int y)> sunTrajectory;
-        int sunPos = 0, direction = 1;
+        Image bitmapImage = new Image();*/
+        //static DispatcherTimer sunTimer = new DispatcherTimer();
+        //List<(int x, int y)> sunTrajectory;
+        //int sunPos = 0, direction = 1;
 
         public MainWindow()
         {
-            InitializeComponent();
-            bitmapImage.Stretch = Stretch.None;
+            InitializeComponent();            
+
+            /*bitmapImage.Stretch = Stretch.None;
             bitmapImage.Margin = new Thickness(0);
-            bitmapImage.Source = bitmap;
-            canvas.Children.Add(bitmapImage);
-            sunTimer.Interval = TimeSpan.FromMilliseconds(10);
-            sunTimer.Tick += SunTimerEvent;
-            sunTrajectory = GetTrajectory(0.05, 15, 10, objWidth / 2 + offsetX, objHeight / 2 + offsetY);
+            bitmapImage.Source = bitmap;*/
+            canvas.Children.Add(drawer.bitmapImage);
+            //sunTimer.Interval = TimeSpan.FromMilliseconds(10);
+            //sunTimer.Tick += SunTimerEvent;
+            //sunTrajectory = GetTrajectory(0.05, 15, 10, objWidth / 2 + offsetX, objHeight / 2 + offsetY);
         }
         
         void LoadFileEvent(object sender, RoutedEventArgs e)
@@ -78,18 +81,8 @@ namespace WpfApp1
 
             if (result == true)
             {
-                for (int row = 0; row < bitmapHeight; row++)
-                {
-                    for (int col = 0; col < bitmapWidth; col++)
-                    {
-                        for (int i = 0; i <= 3; i++)
-                            pixels[row, col, i] = 0;
-                        pixels[row, col, 3] = 255;
-                    }
-                }
-                objParser = new ObjParser();
-                objParser.LoadObj(dialog.FileName, projection, objWidth / 2, objHeight / 2, offsetX, offsetY);
-                RedrawCanvas();
+                drawer.Initialize(dialog.FileName, projection);
+                Drawer.Redraw(drawer, sun);
             }
         }
         void XY_AxisProjEvent(object sender, RoutedEventArgs e) => projection = Projection.XY;
@@ -97,24 +90,25 @@ namespace WpfApp1
 
         void kdSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            kd = kdSlider.Value;
-            RedrawCanvas();
+            drawer.kd = kdSlider.Value;
+            Drawer.Redraw(drawer, sun);
         }
         void ksSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            ks = ksSlider.Value;
-            RedrawCanvas();
+            drawer.ks = ksSlider.Value;
+            Drawer.Redraw(drawer, sun);
         }
         void mSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            m = (int)mSlider.Value;
-            RedrawCanvas();
+            drawer.m = (int)mSlider.Value;
+            Drawer.Redraw(drawer, sun);
         }
 
         private void zSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            z_bigSun = (int)zSlider.Value;
-            RedrawCanvas();
+            sun.z = (int)zSlider.Value;
+            //z_bigSun = (int)zSlider.Value;
+            Drawer.Redraw(drawer, sun);
         }
 
         private void SunSimulationEvent(object sender, RoutedEventArgs e)
@@ -122,22 +116,22 @@ namespace WpfApp1
             if (sunSimulationButton.Content.ToString() == "Start simulation")
             {
                 sunSimulationButton.Content = "Stop simulation";
-                sunTimer.Start();
+                sun.timer.Start();
             }
             else
             {
                 sunSimulationButton.Content = "Start simulation";
-                sunTimer.Stop();
+                sun.timer.Stop();
             }
         }
 
-        void RedrawCanvas()
+        /*public static void RedrawCanvas()
         {       
             if (objParser != null)
                 ObjFunctions.DrawObj(objParser, kd, ks, m, sunColor, new Vertex3D(x_bigSun, y_bigSun, z_bigSun), bitmap, pixels, pixels1d, rect, stride);
-        }
+        }*/
 
-        void SunTimerEvent(object sender, EventArgs e)
+/*        void SunTimerEvent(object sender, EventArgs e)
         {
             x_bigSun = sunTrajectory[sunPos].x;
             y_bigSun = sunTrajectory[sunPos].y;
@@ -168,7 +162,7 @@ namespace WpfApp1
             }
 
             return trajectory;
-        }
+        }*/
 
     }
 }
