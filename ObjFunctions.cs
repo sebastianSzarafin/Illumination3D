@@ -14,8 +14,7 @@ namespace WpfApp1
     static class ObjFunctions
     {
         //TODO 
-        public static void DrawObj(ObjParser objParser, double kd, double ks, int m, Color sunColor,
-            Vertex3D bigSunPos, WriteableBitmap bitmap, byte[,,] pixels, byte[] pixels1d, Int32Rect rect, int stride)
+        public static void DrawObj(Drawer drawer, Sun sun)
         {
             if (drawer.objParser == null) return;
 
