@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Threading;
 
@@ -37,14 +38,16 @@ namespace WpfApp1
         {
             x = trajectory[trI].x;
             y = trajectory[trI].y;
-            if (trI == trajectory.Count - 1) direction = -1;
+            if (trI == trajectory.Count - 1) 
+                direction = -1;
             if (trI == 0) direction = 1;
             trI += direction;
+
             Drawer.Redraw(drawer, this);
         }
         List<(int x, int y)> GetTrajectory(double scale, double delta, double revolutions)
         {
-            trajectory = new List<(int x, int y)>();
+            List<(int x, int y)> trajectory = new List<(int x, int y)>();
             double X = centreX;
             double Y = centreY;
             trajectory.Add(((int)X, (int)Y));
@@ -56,6 +59,19 @@ namespace WpfApp1
                 theta += delta;
 
                 radius = (Math.Pow(theta / 180 * Math.PI, Math.E)) * scale;
+
+                X = (radius * Math.Cos(theta / 180 * Math.PI)) + centreX;
+                Y = (radius * Math.Sin(theta / 180 * Math.PI)) + centreY;
+
+                trajectory.Add(((int)X, (int)Y));
+            }
+            trajectory = trajectory.Distinct().ToList();
+
+            int loops = 2;
+            double startTheta = theta;
+            while(theta - startTheta < 360 * loops)
+            {
+                theta += delta;
 
                 X = (radius * Math.Cos(theta / 180 * Math.PI)) + centreX;
                 Y = (radius * Math.Sin(theta / 180 * Math.PI)) + centreY;

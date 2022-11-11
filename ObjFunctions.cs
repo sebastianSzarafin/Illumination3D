@@ -35,7 +35,7 @@ namespace WpfApp1
             }
             foreach (Polygon polygon in drawer.objParser.polygons)
             {
-                ScanLineFill(polygon, drawer, sun, ET);
+                ScanLineFill(polygon, drawer, ET);
             }
 
             /*watch.Stop();
@@ -49,7 +49,7 @@ namespace WpfApp1
             watch.Stop();
             Debug.WriteLine(watch.Elapsed);
         }
-        public static void ScanLineFill(Polygon polygon, Drawer drawer, Sun sun, List<Edge>[] ET)
+        public static void ScanLineFill(Polygon polygon, Drawer drawer, List<Edge>[] ET)
         {
             double ymin = double.MaxValue, ymax = double.MinValue;
             foreach (Vertex3D v in polygon.vertices)
