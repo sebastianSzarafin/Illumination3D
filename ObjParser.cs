@@ -42,7 +42,7 @@ namespace WpfApp1
             polygons = new List<Polygon>();
             edges = new List<Edge>();
         }
-        public void LoadObj(string fileName, MainWindow.Projection projection, int bitmapW, int bitmapH, int offsetX, int offsetY)
+        public void LoadObj(string fileName, MainWindow.Projection projection)
         {
             string[] reader = File.ReadAllLines(fileName);
             foreach(string line in reader)
@@ -63,7 +63,7 @@ namespace WpfApp1
                                     v = new Vertex3D(Convert.ToDouble(parts[1], CultureInfo.InvariantCulture), Convert.ToDouble(parts[3], CultureInfo.InvariantCulture), Convert.ToDouble(parts[2], CultureInfo.InvariantCulture));
                                     break;
                             }                            
-                            vertices.Add(new Vertex3D(v.x * bitmapW + bitmapW + offsetX, v.y * bitmapH + bitmapH + offsetY, v.z * bitmapH + bitmapH + offsetY));
+                            vertices.Add(new Vertex3D(v.x * Drawer.objWidth / 2 + Drawer.objWidth / 2 + Drawer.offsetX, v.y * Drawer.objHeight / 2 + Drawer.objHeight / 2 + Drawer.offsetY, v.z * Drawer.objHeight / 2 + Drawer.objHeight / 2 + Drawer.offsetY));
                             break;
                         case "vn":
                             Normal3D vector = new Normal3D(0, 0, 0);
