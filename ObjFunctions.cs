@@ -17,24 +17,26 @@ namespace WpfApp1
         public static void DrawObj(ObjParser objParser, double kd, double ks, int m, Color sunColor,
             Vertex3D bigSunPos, WriteableBitmap bitmap, byte[,,] pixels, byte[] pixels1d, Int32Rect rect, int stride)
         {
+            if (drawer.objParser == null) return;
+
             var watch = new Stopwatch();
             watch.Start();
 
-            SetVerticesColor(objParser, kd, ks, m, sunColor, bigSunPos, pixels);
+            SetVerticesColor(drawer, sun);
 
 
             /*watch.Stop();
             Debug.WriteLine(watch.Elapsed);*/
 
-            int n = pixels.GetLength(0);
+            int n = drawer.pixels.GetLength(0);
             List<Edge>[] ET = new List<Edge>[n];
             for (int i = 0; i < n; i++)
             {
                 ET[i] = new List<Edge>();
             }
-            foreach (Polygon polygon in objParser.polygons)
+            foreach (Polygon polygon in drawer.objParser.polygons)
             {
-                ScanLineFill(polygon, kd, ks, m, sunColor, bigSunPos, pixels, ET);
+                ScanLineFill(polygon, drawer, sun, ET);
             }
 
             /*watch.Stop();
@@ -43,13 +45,12 @@ namespace WpfApp1
             /*var watch = new Stopwatch();
             watch.Start();*/
 
-            RedrawBitmap(pixels, rect, stride, pixels1d, bitmap);
+            RedrawBitmap(drawer);
 
             watch.Stop();
             Debug.WriteLine(watch.Elapsed);
         }
-        public static void ScanLineFill(Polygon polygon, double kd, double ks, int m, Color sunColor,
-            Vertex3D bigSunPos, byte[,,] pixels, List<Edge>[] ET)
+        public static void ScanLineFill(Polygon polygon, Drawer drawer, Sun sun, List<Edge>[] ET)
         {
             double ymin = double.MaxValue, ymax = double.MinValue;
             foreach (Vertex3D v in polygon.vertices)
@@ -80,7 +81,7 @@ namespace WpfApp1
                     foreach (int x in Enumerable.Range((int)Math.Ceiling(AET[i].x), (int)Math.Ceiling(AET[i + 1].x - AET[i].x)))
                     //foreach (int x in Enumerable.Range((int)Math.Ceiling(AET[i].x), Math.Max((int)(Math.Floor(AET[i + 1].x) - Math.Ceiling(AET[i].x)), 0)))
                     {
-                        SetPixel(v1, v2, v3, P, x, y, pixels);
+                        SetPixel(v1, v2, v3, P, x, y, drawer.pixels);
                     }
                 }
                 y++;
@@ -130,11 +131,11 @@ namespace WpfApp1
             double getLength(Vertex3D v1, Vertex3D v2) => Math.Sqrt((v1.x - v2.x) * (v1.x - v2.x) + (v1.y - v2.y) * (v1.y - v2.y));
         }
 
-        static void RedrawBitmap(byte[,,] pixels, Int32Rect rect, int stride, byte[] pixels1d, WriteableBitmap bitmap)
+        static void RedrawBitmap(Drawer drawer)
         {
-            Buffer.BlockCopy(pixels, 0, pixels1d, 0, pixels.Length);
+            Buffer.BlockCopy(drawer.pixels, 0, drawer.pixels1d, 0, drawer.pixels.Length);
 
-            bitmap.WritePixels(rect, pixels1d, stride, 0);
+            drawer.bitmap.WritePixels(drawer.rect, drawer.pixels1d, Drawer.stride, 0);
         }
         static List<Edge>[] CreateET(List<Edge>[] buckets, List<Edge> edges)
         {
@@ -150,63 +151,69 @@ namespace WpfApp1
 
             return buckets;
         }
-        public static void SetVerticesColor(ObjParser objParser, double kd, double ks, int m, Color sunColor,
-            Vertex3D bigSunPos, byte[,,] pixels)
+        public static void SetVerticesColor(Drawer drawer, Sun sun)
         {
+            if (drawer.objParser == null) return;
+
             Normal3D V = new Normal3D(0, 0, 1);
-            foreach (Vertex3D v in objParser.vertices)
+            foreach (Vertex3D v in drawer.objParser.vertices)
             {
-                Normal3D L = new Normal3D(bigSunPos.x - v.x, bigSunPos.y - v.y, bigSunPos.z - v.z);
+                Normal3D L = new Normal3D(sun.x - v.x, sun.y - v.y, sun.z - v.z);
                 L.Normalize();
                 double cosNL = Math.Max(Normal3D.DotProdcut(v.N, L), 0);
                 Normal3D R = 2 * cosNL * v.N - L;
                 R.Normalize();
                 double cosVR = Math.Max(Normal3D.DotProdcut(V, R), 0);
 
-                double sCR = sunColor.R / 255, sCG = (double)sunColor.G / 255, sCB = (double)sunColor.B / 255;
+                double sCR = sun.color.R / 255, sCG = (double)sun.color.G / 255, sCB = (double)sun.color.B / 255;
                 double vCR = (double)v.baseColor.R / 255, vCG = (double)v.baseColor.G / 255, vCB = (double)v.baseColor.B / 255;
 
-                v.paintColor.R = (byte)(Math.Min((kd * sCR * vCR * cosNL + ks * sCR * vCR * Math.Pow(cosVR, m)) * 255, 255));
-                v.paintColor.G = (byte)(Math.Min((kd * sCG * vCG * cosNL + ks * sCG * vCG * Math.Pow(cosVR, m)) * 255, 255));
-                v.paintColor.B = (byte)(Math.Min((kd * sCB * vCB * cosNL + ks * sCB * vCB * Math.Pow(cosVR, m)) * 255, 255));
+                double cosVRtoM = Math.Pow(cosVR, drawer.m);
+
+                v.paintColor.R = (byte)(Math.Min((drawer.kd * sCR * vCR * cosNL + drawer.ks * sCR * vCR * cosVRtoM) * 255, 255));
+                v.paintColor.G = (byte)(Math.Min((drawer.kd * sCG * vCG * cosNL + drawer.ks * sCG * vCG * cosVRtoM) * 255, 255));
+                v.paintColor.B = (byte)(Math.Min((drawer.kd * sCB * vCB * cosNL + drawer.ks * sCB * vCB * cosVRtoM) * 255, 255));
 
                 /*if (v.x < 0) v.x = 0;
                 if (v.x >= pixels.GetLength(0)) v.x = pixels.GetLength(0) - 1;
                 if (v.y < 0) v.y = 0;
                 if (v.y >= pixels.GetLength(1)) v.y = pixels.GetLength(1) - 1;*/
 
-                pixels[(int)v.x, (int)v.y, 2] = v.paintColor.R;
-                pixels[(int)v.x, (int)v.y, 1] = v.paintColor.G;
-                pixels[(int)v.x, (int)v.y, 0] = v.paintColor.B;
+                drawer.pixels[(int)v.x, (int)v.y, 2] = v.paintColor.R;
+                drawer.pixels[(int)v.x, (int)v.y, 1] = v.paintColor.G;
+                drawer.pixels[(int)v.x, (int)v.y, 0] = v.paintColor.B;
             }
         }
-        public static void SetVertexColor(Vertex3D v, double kd, double ks, int m, Color sunColor,
-            Vertex3D bigSunPos, byte[,,] pixels)
+        public static void SetVertexColor(Vertex3D v, Drawer drawer, Sun sun)
         {
+            if (drawer.objParser == null) return;
+
             Normal3D V = new Normal3D(0, 0, 1);
 
-            Normal3D L = new Normal3D(bigSunPos.x - v.x, bigSunPos.y - v.y, bigSunPos.z - v.z);
+            Normal3D L = new Normal3D(sun.x - v.x, sun.y - v.y, sun.z - v.z);
             L.Normalize();
             double cosNL = Math.Max(Normal3D.DotProdcut(v.N, L), 0);
             Normal3D R = 2 * cosNL * v.N - L;
             R.Normalize();
             double cosVR = Math.Max(Normal3D.DotProdcut(V, R), 0);
 
-            double sCR = sunColor.R / 255, sCG = sunColor.G / 255, sCB = sunColor.B / 255;
-            double vCR = v.baseColor.R / 255, vCG = v.baseColor.G / 255, vCB = v.baseColor.B / 255;
+            double sCR = sun.color.R / 255, sCG = (double)sun.color.G / 255, sCB = (double)sun.color.B / 255;
+            double vCR = (double)v.baseColor.R / 255, vCG = (double)v.baseColor.G / 255, vCB = (double)v.baseColor.B / 255;
 
-            v.paintColor.R = (byte)(Math.Min((kd * sCR * vCR * cosNL + ks * sCR * vCR * Math.Pow(cosVR, m)) * 255, 255));
-            v.paintColor.G = (byte)(Math.Min((kd * sCG * vCG * cosNL + ks * sCG * vCG * Math.Pow(cosVR, m)) * 255, 255));
-            v.paintColor.B = (byte)(Math.Min((kd * sCB * vCB * cosNL + ks * sCB * vCB * Math.Pow(cosVR, m)) * 255, 255));
+            double cosVRtoM = Math.Pow(cosVR, drawer.m);
+
+            v.paintColor.R = (byte)(Math.Min((drawer.kd * sCR * vCR * cosNL + drawer.ks * sCR * vCR * cosVRtoM) * 255, 255));
+            v.paintColor.G = (byte)(Math.Min((drawer.kd * sCG * vCG * cosNL + drawer.ks * sCG * vCG * cosVRtoM) * 255, 255));
+            v.paintColor.B = (byte)(Math.Min((drawer.kd * sCB * vCB * cosNL + drawer.ks * sCB * vCB * cosVRtoM) * 255, 255));
 
             /*if (v.x < 0) v.x = 0;
             if (v.x >= pixels.GetLength(0)) v.x = pixels.GetLength(0) - 1;
             if (v.y < 0) v.y = 0;
             if (v.y >= pixels.GetLength(1)) v.y = pixels.GetLength(1) - 1;*/
 
-            pixels[(int)v.x, (int)v.y, 2] = v.paintColor.R;
-            pixels[(int)v.x, (int)v.y, 1] = v.paintColor.G;
-            pixels[(int)v.x, (int)v.y, 0] = v.paintColor.B;
+            drawer.pixels[(int)v.x, (int)v.y, 2] = v.paintColor.R;
+            drawer.pixels[(int)v.x, (int)v.y, 1] = v.paintColor.G;
+            drawer.pixels[(int)v.x, (int)v.y, 0] = v.paintColor.B;
         }
     }
 }
