@@ -130,7 +130,6 @@ namespace WpfApp1
             public double z;
             public Normal3D(double _x, double _y, double _z) { x = _x; y = _y; z = _z; }
             public static double DotProdcut(Normal3D n1, Normal3D n2) => n1.x * n2.x + n1.y * n2.y + n1.z * n2.z;
-            public static double DotProdcut2D(Normal3D n1, Normal3D n2) => n1.x * n2.x + n1.y * n2.y;
             public static Normal3D operator *(double a, Normal3D n) => new Normal3D(a * n.x, a * n.y, a * n.z);
             public static Normal3D operator -(Normal3D n1, Normal3D n2) => new Normal3D(n1.x - n2.x, n1.y - n2.y, n1.z - n2.z);
             public void Normalize()

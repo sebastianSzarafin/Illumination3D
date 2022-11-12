@@ -67,7 +67,7 @@ namespace WpfApp1
             }
             trajectory = trajectory.Distinct().ToList();
 
-            int loops = 2;
+            int loops = 10;
             double startTheta = theta;
             while(theta - startTheta < 360 * loops)
             {

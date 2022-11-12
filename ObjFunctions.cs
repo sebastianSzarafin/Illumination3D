@@ -106,10 +106,10 @@ namespace WpfApp1
             pixels[x, y, 1] = (byte)(c * v1.paintColor.G + b * v2.paintColor.G + a * v3.paintColor.G);
             pixels[x, y, 0] = (byte)(c * v1.paintColor.B + b * v2.paintColor.B + a * v3.paintColor.B);*/
 
-            Vertex3D v = new Vertex3D(x, y, 0);
+            //Vertex3D v = new Vertex3D(x, y, 0);
 
-            double a = crossProduct2D(v1.x - v.x, v1.y - v.y, v2.x - v.x, v2.y - v.y) / P;
-            double b = crossProduct2D(v1.x - v.x, v1.y - v.y, v3.x - v.x, v3.y - v.y) / P;
+            double a = crossProduct2D(v1.x - x, v1.y - y, v2.x - x, v2.y - y) / P;
+            double b = crossProduct2D(v1.x - x, v1.y - y, v3.x - x, v3.y - y) / P;
             double c = 1 - a - b;
 
             pixels[x, y, 2] = (byte)(c * v1.paintColor.R + b * v2.paintColor.R + a * v3.paintColor.R);
@@ -157,7 +157,7 @@ namespace WpfApp1
             Normal3D V = new Normal3D(0, 0, 1);
             foreach (Vertex3D v in drawer.objParser.vertices)
             {
-                Normal3D L = new Normal3D(sun.x - v.x, sun.y - v.y, sun.z - v.z);
+                Normal3D L = new Normal3D(sun.x - v.x, sun.y - v.y, 0);
                 L.Normalize();
                 double cosNL = Math.Max(Normal3D.DotProdcut(v.N, L), 0);
                 Normal3D R = 2 * cosNL * v.N - L;
