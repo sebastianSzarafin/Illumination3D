@@ -35,18 +35,24 @@ namespace WpfApp1
 
     public partial class MainWindow : Window
     {
-        static Drawer drawer = new Drawer(0.5, 0.5, 50);
-        static Sun sun = new Sun(Color.FromRgb(255, 255, 255), Drawer.objWidth / 2 + Drawer.offsetX, Drawer.objHeight / 2 + Drawer.offsetY, 1000, drawer);
-        public Projection projection = Projection.XY;
+        static Color defaultVertexColor = Colors.Coral;
+        static Color defaultSunColor = Colors.White;
+        static Drawer drawer = new Drawer(0.5, 0.5, 50, drawOption);
+        static Sun sun = new Sun(defaultSunColor, Drawer.objWidth / 2 + Drawer.offsetX, Drawer.objHeight / 2 + Drawer.offsetY, 1000, drawer);
+        public static Projection projection = Projection.XY;
         public enum Projection { XY, XZ };
+        public static DrawOption drawOption = DrawOption.interpolate;
+        public enum DrawOption { interpolate, designate };
 
         public MainWindow()
         {
-            InitializeComponent();            
-
+            InitializeComponent();
+            string s = defaultVertexColor.ToString();
             canvas.Children.Add(drawer.bitmapImage);
             objColors.ItemsSource = typeof(Colors).GetProperties();
+            objColors.SelectedItem = typeof(Colors).GetProperty("Coral");
             sunColors.ItemsSource = typeof(Colors).GetProperties();
+            sunColors.SelectedItem = typeof(Colors).GetProperty("White");
         }
         
         void LoadFileEvent(object sender, RoutedEventArgs e)
@@ -116,6 +122,20 @@ namespace WpfApp1
         {
             Color sunColor = (Color)(sunColors.SelectedItem as PropertyInfo).GetValue(null, null);
             sun.color = sunColor;
+            Drawer.Redraw(drawer, sun);
+        }
+
+        private void InterpolateDrawEvent(object sender, RoutedEventArgs e)
+        {
+            drawOption = DrawOption.interpolate;
+            drawer.drawOption = drawOption;
+            Drawer.Redraw(drawer, sun);
+        }
+
+        private void DesignateDrawEvent(object sender, RoutedEventArgs e)
+        {
+            drawOption = DrawOption.designate;
+            drawer.drawOption = drawOption;
             Drawer.Redraw(drawer, sun);
         }
     }

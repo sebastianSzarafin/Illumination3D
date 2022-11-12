@@ -76,7 +76,6 @@ namespace WpfApp1
                                     vector = new Normal3D(Convert.ToDouble(parts[1], CultureInfo.InvariantCulture), Convert.ToDouble(parts[3], CultureInfo.InvariantCulture), Convert.ToDouble(parts[2], CultureInfo.InvariantCulture));
                                     break;
                             }
-                            vector.Normalize();
                             normals.Add(vector);
                             break;
                         case "f":
@@ -128,23 +127,29 @@ namespace WpfApp1
             public double x;
             public double y;
             public double z;
-            public Normal3D(double _x, double _y, double _z) { x = _x; y = _y; z = _z; }
+            public Normal3D(double _x, double _y, double _z) 
+            {
+                x = _x; 
+                y = _y; 
+                z = _z;
+                double sum = Math.Abs(_x) + Math.Abs(_y) + Math.Abs(_z);
+                if(sum != 0)
+                {
+                    x /= sum;
+                    y /= sum;
+                    z /= sum;
+                }
+            }
             public static double DotProdcut(Normal3D n1, Normal3D n2) => n1.x * n2.x + n1.y * n2.y + n1.z * n2.z;
             public static Normal3D operator *(double a, Normal3D n) => new Normal3D(a * n.x, a * n.y, a * n.z);
             public static Normal3D operator -(Normal3D n1, Normal3D n2) => new Normal3D(n1.x - n2.x, n1.y - n2.y, n1.z - n2.z);
-            public void Normalize()
-            {
-                double sum = Math.Abs(x) + Math.Abs(y) + Math.Abs(z);
-                x /= sum;
-                y /= sum;
-                z /= sum;
-            }
+            public static Normal3D operator +(Normal3D n1, Normal3D n2) => new Normal3D(n1.x + n2.x, n1.y + n2.y, n1.z + n2.z);
         }
-        internal class Vector3D : Normal3D
+        /*internal class Vector3D : Normal3D
         {
             public Vector3D(double _x, double _y, double _z) : base(_x, _y, _z) { }
             public Vector3D(Vertex3D v1, Vertex3D v2) : base(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z) { }
-        }
+        }*/
         internal class Face
         {
             public int[] vertexIndex;

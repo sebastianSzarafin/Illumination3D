@@ -20,9 +20,11 @@
 
         <ScrollViewer HorizontalScrollBarVisibility="Auto">
             <StackPanel Background="AliceBlue" Grid.Row="0" Grid.Column="0" CanVerticallyScroll="True" Width="180">
-                <Button Height="50" Margin="10" Click="LoadFileEvent">Load file</Button>
-                <RadioButton IsChecked="True" Margin="0 0 0 8" HorizontalAlignment="Center" Click="XY_AxisProjEvent">XY axis proj.</RadioButton>
-                <RadioButton Margin="0 0 0 8" HorizontalAlignment="Center" Click="XZ_AxisProjEvent">XZ axis proj.</RadioButton>
+                <StackPanel>
+                    <Button Height="50" Margin="10" Click="LoadFileEvent">Load file</Button>
+                    <RadioButton IsChecked="True" Margin="0 0 0 10" HorizontalAlignment="Center" Click="XY_AxisProjEvent">XY axis proj.</RadioButton>
+                    <RadioButton Margin="0 0 0 10" HorizontalAlignment="Center" Click="XZ_AxisProjEvent">XZ axis proj.</RadioButton>
+                </StackPanel>
 
                 <Separator/>
 
@@ -68,7 +70,7 @@
                         </ComboBox.ItemTemplate>
                     </ComboBox>
                 </DockPanel>
-                <DockPanel Margin="10 0 10 0">
+                <DockPanel Margin="10 0 10 10">
                     <Label Content="Sun" HorizontalAlignment="Center"/>
                     <ComboBox Name="sunColors" SelectionChanged="SunColorChangedEvent">
                         <ComboBox.ItemTemplate>
@@ -82,8 +84,13 @@
                     </ComboBox>
                 </DockPanel>
 
+                <Separator/>
 
-
+                <Label Content="Drawing settings:"/>
+                <StackPanel>
+                    <RadioButton IsChecked="True" Margin="25 0 0 10" HorizontalAlignment="Left" Click="InterpolateDrawEvent">Interpolation</RadioButton>
+                    <RadioButton Margin="25 0 0 10" HorizontalAlignment="Left" Click="DesignateDrawEvent">Explicit designation</RadioButton>
+                </StackPanel>
             </StackPanel>
 
         </ScrollViewer>

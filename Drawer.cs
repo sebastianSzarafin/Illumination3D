@@ -29,8 +29,9 @@ namespace WpfApp1
         public Int32Rect rect;
         public static int stride = 4 * bitmapWidth;
         public Image bitmapImage;
+        public DrawOption drawOption;
 
-        public Drawer(double _kd, double _ks, int _m)
+        public Drawer(double _kd, double _ks, int _m, DrawOption _drawOption)
         {
             kd = _kd;
             ks = _ks;
@@ -43,6 +44,7 @@ namespace WpfApp1
             bitmapImage.Stretch = Stretch.None;
             bitmapImage.Margin = new Thickness(0);
             bitmapImage.Source = bitmap;
+            drawOption = _drawOption;
         }
 
         public static void Redraw(Drawer drawer, Sun sun)
