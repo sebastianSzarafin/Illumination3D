@@ -157,7 +157,7 @@ namespace WpfApp1
             Normal3D V = new Normal3D(0, 0, 1);
             foreach (Vertex3D v in drawer.objParser.vertices)
             {
-                Normal3D L = new Normal3D(sun.x - v.x, sun.y - v.y, 0);
+                Normal3D L = new Normal3D(sun.x - v.x, sun.y - v.y, sun.z - v.z);
                 L.Normalize();
                 double cosNL = Math.Max(Normal3D.DotProdcut(v.N, L), 0);
                 Normal3D R = 2 * cosNL * v.N - L;
