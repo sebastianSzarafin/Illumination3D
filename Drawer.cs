@@ -28,6 +28,7 @@ namespace WpfApp1
         public static int offsetX = (bitmapWidth - objWidth) / 2, offsetY = (bitmapHeight - objHeight) / 2;
         public WriteableBitmap bitmap;
         public byte[,,] pixels;
+        public byte[,,] extImagePixels;
         public byte[] pixels1d;
         public Int32Rect rect;
         public static int stride = 4 * bitmapWidth;
@@ -43,6 +44,7 @@ namespace WpfApp1
             m = _m;
             bitmap = new WriteableBitmap(bitmapWidth, bitmapHeight, 96, 96, PixelFormats.Bgra32, null);
             pixels = new byte[bitmapHeight, bitmapWidth, 4];
+            extImagePixels = new byte[bitmapHeight, bitmapWidth, 4];
             pixels1d = new byte[bitmapHeight * bitmapWidth * 4];
             rect = new Int32Rect(0, 0, bitmapWidth, bitmapHeight);
             bitmapImage = new Image();
@@ -84,10 +86,10 @@ namespace WpfApp1
                 for (int col = 0; col < bitmapImage.PixelWidth; col++)
                 {
                     int index = row * bitmapImageStride + 4 * col;
-                    pixels[row + offsetY, col + offsetX, 0] = bitmapImagePixels[index];
-                    pixels[row + offsetY, col + offsetX, 1] = bitmapImagePixels[index + 1];
-                    pixels[row + offsetY, col + offsetX, 2] = bitmapImagePixels[index + 2];
-                    pixels[row + offsetY, col + offsetX, 3] = bitmapImagePixels[index + 3];
+                    extImagePixels[row + offsetY, col + offsetX, 0] = bitmapImagePixels[index];
+                    extImagePixels[row + offsetY, col + offsetX, 1] = bitmapImagePixels[index + 1];
+                    extImagePixels[row + offsetY, col + offsetX, 2] = bitmapImagePixels[index + 2];
+                    extImagePixels[row + offsetY, col + offsetX, 3] = bitmapImagePixels[index + 3];
                 }
             }
 
@@ -95,9 +97,9 @@ namespace WpfApp1
             {
                 foreach (Vertex3D v in objParser.vertices)
                 {
-                    v.baseColor.R = pixels[(int)v.y, (int)v.x, 2];
-                    v.baseColor.G = pixels[(int)v.y, (int)v.x, 1];
-                    v.baseColor.B = pixels[(int)v.y, (int)v.x, 0];
+                    v.baseColor.R = extImagePixels[(int)v.y, (int)v.x, 2];
+                    v.baseColor.G = extImagePixels[(int)v.y, (int)v.x, 1];
+                    v.baseColor.B = extImagePixels[(int)v.y, (int)v.x, 0];
                 }
             }
             

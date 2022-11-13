@@ -26,8 +26,6 @@ namespace WpfApp1
             {
                 SetVertexColor(v, drawer, sun);
             }
-            //SetVerticesColor(drawer, sun);
-
 
             /*watch.Stop();
             Debug.WriteLine(watch.Elapsed);*/
@@ -113,7 +111,6 @@ namespace WpfApp1
             pixels[y, x, 1] = (byte)(c * v1.paintColor.G + b * v2.paintColor.G + a * v3.paintColor.G);
             pixels[y, x, 0] = (byte)(c * v1.paintColor.B + b * v2.paintColor.B + a * v3.paintColor.B);
         }
-        //TODO
         static void SetPixelExplicitly(Vertex3D v1, Vertex3D v2, Vertex3D v3, double P, int x, int y, Drawer drawer, Sun sun)
         {
             double a = CrossProduct2D(v1.x - x, v1.y - y, v2.x - x, v2.y - y) / P;
@@ -124,7 +121,6 @@ namespace WpfApp1
             Normal3D N = c * v1.N + b * v2.N + a * v3.N;
             SetPixelColor(x, y, z, N, drawer, sun);
         }
-        //
         static double CrossProduct2D(double x1, double y1, double x2, double y2) => Math.Abs(x1 * y2 - y1 * x2);
         static void RedrawBitmap(Drawer drawer)
         {
@@ -173,18 +169,18 @@ namespace WpfApp1
         {
             if (drawer.objParser == null) return;
 
-            double R, G, B;
+            double cR, cG, cB;
             if(drawer.isExtImageSet)
             {
-                R = drawer.pixels[(int)y, (int)x, 2] / 255;
-                G = drawer.pixels[(int)y, (int)x, 1] / 255;
-                B = drawer.pixels[(int)y, (int)x, 0] / 255;
+                cR = (double)drawer.extImagePixels[(int)y, (int)x, 2] / 255;
+                cG = (double)drawer.extImagePixels[(int)y, (int)x, 1] / 255;
+                cB = (double)drawer.extImagePixels[(int)y, (int)x, 0] / 255;
             }
             else
             {
-                R = drawer.defaultVertexColor.R / 255;
-                G = drawer.defaultVertexColor.G / 255;
-                B = drawer.defaultVertexColor.B / 255;
+                cR = (double)drawer.defaultVertexColor.R / 255;
+                cG = (double)drawer.defaultVertexColor.G / 255;
+                cB = (double)drawer.defaultVertexColor.B / 255;
             }
 
             Normal3D V = new Normal3D(0, 0, 1);
@@ -193,18 +189,18 @@ namespace WpfApp1
             L.Normalize();
             double cosNL = Math.Max(Normal3D.DotProdcut(N, L), 0);
             Normal3D R = 2 * cosNL * N - L;
-            //R.Normalize();
-            //double cosVR = Math.Max(Normal3D.DotProdcut(V, R), 0);
+            R.Normalize();
+            double cosVR = Math.Max(Normal3D.DotProdcut(V, R), 0);
 
-            //double cosVRtoM = Math.Pow(cosVR, drawer.m);
+            double cosVRtoM = Math.Pow(cosVR, drawer.m);
 
-            //R = Math.Min((drawer.kd * sun.CR * R * cosNL + drawer.ks * sun.CR * R * cosVRtoM) * 255, 255);
-            //G = Math.Min((drawer.kd * sun.CG * G * cosNL + drawer.ks * sun.CG * G * cosVRtoM) * 255, 255);
-            //B = Math.Min((drawer.kd * sun.CB * B * cosNL + drawer.ks * sun.CB * B * cosVRtoM) * 255, 255);
+            cR = Math.Min((drawer.kd * sun.CR * cR * cosNL + drawer.ks * sun.CR * cR * cosVRtoM) * 255, 255);
+            cG = Math.Min((drawer.kd * sun.CG * cG * cosNL + drawer.ks * sun.CG * cG * cosVRtoM) * 255, 255);
+            cB = Math.Min((drawer.kd * sun.CB * cB * cosNL + drawer.ks * sun.CB * cB * cosVRtoM) * 255, 255);
 
-            //drawer.pixels[(int)y, (int)x, 2] = (byte)R;
-            //drawer.pixels[(int)y, (int)x, 1] = (byte)G;
-            //drawer.pixels[(int)y, (int)x, 0] = (byte)B;
+            drawer.pixels[(int)y, (int)x, 2] = (byte)cR;
+            drawer.pixels[(int)y, (int)x, 1] = (byte)cG;
+            drawer.pixels[(int)y, (int)x, 0] = (byte)cB;
         }
     }
 }
