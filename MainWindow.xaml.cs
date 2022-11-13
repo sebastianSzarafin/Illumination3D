@@ -19,25 +19,19 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Reflection;
 
+
 namespace WpfApp1
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-
-
-    public class PositionConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => 4 * (double)value;
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
-    }
+    /// 
 
     public partial class MainWindow : Window
     {
         static Color defaultVertexColor = Colors.Coral;
         static Color defaultSunColor = Colors.White;
-        static Drawer drawer = new Drawer(0.5, 0.5, 50, drawOption);
+        static Drawer drawer = new Drawer(0.5, 0.5, 50, drawOption, defaultVertexColor);
         static Sun sun = new Sun(defaultSunColor, Drawer.objWidth / 2 + Drawer.offsetX, Drawer.objHeight / 2 + Drawer.offsetY, 1000, drawer);
         public static Projection projection = Projection.XY;
         public enum Projection { XY, XZ };
@@ -64,7 +58,21 @@ namespace WpfApp1
 
             if (result == true)
             {
-                drawer.Initialize(dialog.FileName, projection);
+                drawer.Initialize(dialog.FileName, projection, defaultVertexColor);
+                Drawer.Redraw(drawer, sun);
+            }
+        }
+        void LoadImageEvent(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog();
+            dialog.Filter = "Image files (*.png;*.jpeg)|*.png;*.jpeg";
+
+            bool? result = dialog.ShowDialog();
+
+            if (result == true)
+            {
+                BitmapImage myImage = new BitmapImage(new Uri(dialog.FileName, UriKind.Absolute));
+                drawer.ProcessImage(myImage);
                 Drawer.Redraw(drawer, sun);
             }
         }

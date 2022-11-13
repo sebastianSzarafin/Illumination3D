@@ -13,6 +13,8 @@ using static WpfApp1.MainWindow;
 using System.Windows.Documents;
 using System.IO.Packaging;
 using System.Windows.Shapes;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace WpfApp1
 {
@@ -31,8 +33,10 @@ namespace WpfApp1
         public static int stride = 4 * bitmapWidth;
         public Image bitmapImage;
         public DrawOption drawOption;
+        public Color defaultVertexColor;
+        public bool isExtImageSet = false;
 
-        public Drawer(double _kd, double _ks, int _m, DrawOption _drawOption)
+        public Drawer(double _kd, double _ks, int _m, DrawOption _drawOption, Color _defaultVertexColor)
         {
             kd = _kd;
             ks = _ks;
@@ -46,6 +50,7 @@ namespace WpfApp1
             bitmapImage.Margin = new Thickness(0);
             bitmapImage.Source = bitmap;
             drawOption = _drawOption;
+            defaultVertexColor = _defaultVertexColor;
         }
 
         public static void Redraw(Drawer drawer, Sun sun)
@@ -53,8 +58,7 @@ namespace WpfApp1
             if (drawer.objParser != null)
                 ObjFunctions.DrawObj(drawer, sun);
         }
-
-        public void Initialize(string fileName, Projection projection)
+        public void Initialize(string fileName, Projection projection, Color defaultVertexColor)
         {
             for (int row = 0; row < bitmapHeight; row++)
             {
@@ -66,23 +70,38 @@ namespace WpfApp1
                 }
             }
             objParser = new ObjParser();
-            objParser.LoadObj(fileName, projection);
-            /*objParser.vertices = new List<Vertex3D>() { new Vertex3D(300, 300, 600), new Vertex3D(400, 400, 600), new Vertex3D(200, 400, 600) };
-            //objParser.vertices = new List<Vertex3D>() { new Vertex3D(300, 300, 600), new Vertex3D(200, 400, 600), new Vertex3D(400, 400, 600) };
-            objParser.vertices[0].baseColor = Colors.Red; objParser.vertices[0].paintColor = Colors.Red;
-            objParser.vertices[0].N = new Normal3D(0, 0, 1);
-            objParser.vertices[1].baseColor = Colors.Green; objParser.vertices[1].paintColor = Colors.Green;
-            objParser.vertices[1].N = new Normal3D(0, 0, 1);
-            objParser.vertices[2].baseColor = Colors.Blue; objParser.vertices[2].paintColor = Colors.Blue;
-            objParser.vertices[2].N = new Normal3D(0, 0, 1);
+            objParser.LoadObj(fileName, projection, defaultVertexColor);
+        }
+        public void ProcessImage(BitmapImage bitmapImage)
+        {
+            int bitmapImageStride = bitmapImage.PixelWidth * 4;
+            int bitmapImageSize = bitmapImage.PixelHeight * bitmapImageStride;
+            byte[] bitmapImagePixels = new byte[bitmapImageSize];
+            bitmapImage.CopyPixels(bitmapImagePixels, bitmapImageStride, 0);
 
-            List<Edge> edges = new List<Edge>();
-            for (int i = 0; i < 3; i++)
+            for (int row = 0; row < bitmapImage.PixelHeight; row++)
             {
-                edges.Add(new Edge(objParser.vertices[i], objParser.vertices[(i + 1) % 3]));
+                for (int col = 0; col < bitmapImage.PixelWidth; col++)
+                {
+                    int index = row * bitmapImageStride + 4 * col;
+                    pixels[row + offsetY, col + offsetX, 0] = bitmapImagePixels[index];
+                    pixels[row + offsetY, col + offsetX, 1] = bitmapImagePixels[index + 1];
+                    pixels[row + offsetY, col + offsetX, 2] = bitmapImagePixels[index + 2];
+                    pixels[row + offsetY, col + offsetX, 3] = bitmapImagePixels[index + 3];
+                }
             }
 
-            objParser.polygons.Add(new ObjParser.Polygon(objParser.vertices, edges));*/
+            if(objParser != null)
+            {
+                foreach (Vertex3D v in objParser.vertices)
+                {
+                    v.baseColor.R = pixels[(int)v.y, (int)v.x, 2];
+                    v.baseColor.G = pixels[(int)v.y, (int)v.x, 1];
+                    v.baseColor.B = pixels[(int)v.y, (int)v.x, 0];
+                }
+            }
+            
+            isExtImageSet = true;
         }
     }
 }

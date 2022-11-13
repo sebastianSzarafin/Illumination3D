@@ -20,14 +20,21 @@
 
         <ScrollViewer HorizontalScrollBarVisibility="Auto">
             <StackPanel Background="AliceBlue" Grid.Row="0" Grid.Column="0" CanVerticallyScroll="True" Width="180">
+                <Label Content="Load obj:"/>
                 <StackPanel>
-                    <Button Height="50" Margin="10" Click="LoadFileEvent">Load file</Button>
+                    <Button Height="50" Margin="10" Click="LoadFileEvent">Load</Button>
                     <RadioButton IsChecked="True" Margin="0 0 0 10" HorizontalAlignment="Center" Click="XY_AxisProjEvent">XY axis proj.</RadioButton>
                     <RadioButton Margin="0 0 0 10" HorizontalAlignment="Center" Click="XZ_AxisProjEvent">XZ axis proj.</RadioButton>
                 </StackPanel>
 
                 <Separator/>
 
+                <Label Content="Load image:"/>
+                <Button Height="50" Margin="10" Click="LoadImageEvent">Load</Button>
+                
+                <Separator/>
+
+                <Label Content="Parameters:"/>
                 <DockPanel VerticalAlignment="Center" Margin="10">
                     <Label DockPanel.Dock="Left" FontWeight="Bold">kd:</Label>
                     <TextBox Text="{Binding ElementName=kdSlider, Path=Value, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" DockPanel.Dock="Right" TextAlignment="Center" VerticalAlignment="Center" Width="40" />

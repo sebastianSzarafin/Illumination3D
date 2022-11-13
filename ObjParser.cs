@@ -42,7 +42,7 @@ namespace WpfApp1
             polygons = new List<Polygon>();
             edges = new List<Edge>();
         }
-        public void LoadObj(string fileName, MainWindow.Projection projection)
+        public void LoadObj(string fileName, MainWindow.Projection projection, Color baseColor)
         {
             string[] reader = File.ReadAllLines(fileName);
             foreach(string line in reader)
@@ -53,17 +53,17 @@ namespace WpfApp1
                     switch (parts[0])
                     {
                         case "v":
-                            Vertex3D v = new Vertex3D(0, 0, 0);
+                            Vertex3D v = new Vertex3D(0, 0, 0, baseColor);
                             switch (projection)
                             {
                                 case MainWindow.Projection.XY:
-                                    v = new Vertex3D(Convert.ToDouble(parts[1], CultureInfo.InvariantCulture), Convert.ToDouble(parts[2], CultureInfo.InvariantCulture), Convert.ToDouble(parts[3], CultureInfo.InvariantCulture));
+                                    v = new Vertex3D(Convert.ToDouble(parts[1], CultureInfo.InvariantCulture), Convert.ToDouble(parts[2], CultureInfo.InvariantCulture), Convert.ToDouble(parts[3], CultureInfo.InvariantCulture), baseColor);
                                     break;
                                 case MainWindow.Projection.XZ:
-                                    v = new Vertex3D(Convert.ToDouble(parts[1], CultureInfo.InvariantCulture), Convert.ToDouble(parts[3], CultureInfo.InvariantCulture), Convert.ToDouble(parts[2], CultureInfo.InvariantCulture));
+                                    v = new Vertex3D(Convert.ToDouble(parts[1], CultureInfo.InvariantCulture), Convert.ToDouble(parts[3], CultureInfo.InvariantCulture), Convert.ToDouble(parts[2], CultureInfo.InvariantCulture), baseColor);
                                     break;
                             }                            
-                            vertices.Add(new Vertex3D(v.x * Drawer.objWidth / 2 + Drawer.objWidth / 2 + Drawer.offsetX, v.y * Drawer.objHeight / 2 + Drawer.objHeight / 2 + Drawer.offsetY, v.z * Drawer.objHeight / 2 + Drawer.objHeight / 2 + Drawer.offsetY));
+                            vertices.Add(new Vertex3D(v.x * Drawer.objWidth / 2 + Drawer.objWidth / 2 + Drawer.offsetX, v.y * Drawer.objHeight / 2 + Drawer.objHeight / 2 + Drawer.offsetY, v.z * Drawer.objHeight / 2 + Drawer.objHeight / 2 + Drawer.offsetY, baseColor));
                             break;
                         case "vn":
                             Normal3D vector = new Normal3D(0, 0, 0);
@@ -117,14 +117,21 @@ namespace WpfApp1
             public double y;
             public double z;
             public Normal3D N;
-            public System.Windows.Media.Color baseColor = Colors.Coral;
+            public System.Windows.Media.Color baseColor;
             public double CR { get => (double)baseColor.R / 255; }
             public double CG { get => (double)baseColor.G / 255; }
             public double CB { get => (double)baseColor.B / 255; }
-            public System.Windows.Media.Color paintColor = Colors.Coral;
+            public System.Windows.Media.Color paintColor;
 
-            public Vertex3D(double _x, double _y, double _z) { x = _x; y = _y; z = _z; N = new Normal3D(0, 0, 0); }
-            public static Vertex3D operator -(Vertex3D v1, Vertex3D v2) => new Vertex3D(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
+            public Vertex3D(double _x, double _y, double _z, Color _baseColor) 
+            { 
+                x = _x; 
+                y = _y; 
+                z = _z; 
+                N = new Normal3D(0, 0, 0);
+                baseColor = _baseColor;
+                paintColor = _baseColor;
+            }
         }
         internal class Normal3D
         {

@@ -122,7 +122,7 @@ namespace WpfApp1
 
             double z = c * v1.z + b * v2.z + a * v3.z;
             Normal3D N = c * v1.N + b * v2.N + a * v3.N;
-            //SetPixelColor(x, y, z, N, drawer, sun);
+            SetPixelColor(x, y, z, N, drawer, sun);
         }
         //
         static double CrossProduct2D(double x1, double y1, double x2, double y2) => Math.Abs(x1 * y2 - y1 * x2);
@@ -169,28 +169,42 @@ namespace WpfApp1
             drawer.pixels[(int)v.y, (int)v.x, 1] = v.paintColor.G;
             drawer.pixels[(int)v.y, (int)v.x, 0] = v.paintColor.B;
         }
-        /*public static void SetPixelColor(double x, double y, double z, Normal3D N, Drawer drawer, Sun sun)
+        public static void SetPixelColor(double x, double y, double z, Normal3D N, Drawer drawer, Sun sun)
         {
             if (drawer.objParser == null) return;
 
-            Normal3D V = new Normal3D(0, 0, 1);
+            double R, G, B;
+            if(drawer.isExtImageSet)
+            {
+                R = drawer.pixels[(int)y, (int)x, 2] / 255;
+                G = drawer.pixels[(int)y, (int)x, 1] / 255;
+                B = drawer.pixels[(int)y, (int)x, 0] / 255;
+            }
+            else
+            {
+                R = drawer.defaultVertexColor.R / 255;
+                G = drawer.defaultVertexColor.G / 255;
+                B = drawer.defaultVertexColor.B / 255;
+            }
 
+            Normal3D V = new Normal3D(0, 0, 1);
+            
             Normal3D L = new Normal3D(sun.x - x, sun.y - y, sun.z - z);
             L.Normalize();
             double cosNL = Math.Max(Normal3D.DotProdcut(N, L), 0);
             Normal3D R = 2 * cosNL * N - L;
-            R.Normalize();
-            double cosVR = Math.Max(Normal3D.DotProdcut(V, R), 0);
+            //R.Normalize();
+            //double cosVR = Math.Max(Normal3D.DotProdcut(V, R), 0);
 
-            double cosVRtoM = Math.Pow(cosVR, drawer.m);
+            //double cosVRtoM = Math.Pow(cosVR, drawer.m);
 
-            v.paintColor.R = (byte)Math.Min((drawer.kd * sun.CR * v.CR * cosNL + drawer.ks * sun.CR * v.CR * cosVRtoM) * 255, 255);
-            v.paintColor.G = (byte)Math.Min((drawer.kd * sun.CG * v.CG * cosNL + drawer.ks * sun.CG * v.CG * cosVRtoM) * 255, 255);
-            v.paintColor.B = (byte)Math.Min((drawer.kd * sun.CB * v.CB * cosNL + drawer.ks * sun.CB * v.CB * cosVRtoM) * 255, 255);
+            //R = Math.Min((drawer.kd * sun.CR * R * cosNL + drawer.ks * sun.CR * R * cosVRtoM) * 255, 255);
+            //G = Math.Min((drawer.kd * sun.CG * G * cosNL + drawer.ks * sun.CG * G * cosVRtoM) * 255, 255);
+            //B = Math.Min((drawer.kd * sun.CB * B * cosNL + drawer.ks * sun.CB * B * cosVRtoM) * 255, 255);
 
-            drawer.pixels[(int)v.y, (int)v.x, 2] = v.paintColor.R;
-            drawer.pixels[(int)v.y, (int)v.x, 1] = v.paintColor.G;
-            drawer.pixels[(int)v.y, (int)v.x, 0] = v.paintColor.B;
-        }*/
+            //drawer.pixels[(int)y, (int)x, 2] = (byte)R;
+            //drawer.pixels[(int)y, (int)x, 1] = (byte)G;
+            //drawer.pixels[(int)y, (int)x, 0] = (byte)B;
+        }
     }
 }
