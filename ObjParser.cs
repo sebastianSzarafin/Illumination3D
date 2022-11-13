@@ -42,7 +42,7 @@ namespace WpfApp1
             polygons = new List<Polygon>();
             edges = new List<Edge>();
         }
-        public void LoadObj(string fileName, MainWindow.Projection projection)
+        public void LoadObj(string fileName, MainWindow.Projection projection, Color baseColor)
         {
             string[] reader = File.ReadAllLines(fileName);
             foreach(string line in reader)
@@ -53,17 +53,17 @@ namespace WpfApp1
                     switch (parts[0])
                     {
                         case "v":
-                            Vertex3D v = new Vertex3D(0, 0, 0);
+                            Vertex3D v = new Vertex3D(0, 0, 0, baseColor);
                             switch (projection)
                             {
                                 case MainWindow.Projection.XY:
-                                    v = new Vertex3D(Convert.ToDouble(parts[1], CultureInfo.InvariantCulture), Convert.ToDouble(parts[2], CultureInfo.InvariantCulture), Convert.ToDouble(parts[3], CultureInfo.InvariantCulture));
+                                    v = new Vertex3D(Convert.ToDouble(parts[1], CultureInfo.InvariantCulture), Convert.ToDouble(parts[2], CultureInfo.InvariantCulture), Convert.ToDouble(parts[3], CultureInfo.InvariantCulture), baseColor);
                                     break;
                                 case MainWindow.Projection.XZ:
-                                    v = new Vertex3D(Convert.ToDouble(parts[1], CultureInfo.InvariantCulture), Convert.ToDouble(parts[3], CultureInfo.InvariantCulture), Convert.ToDouble(parts[2], CultureInfo.InvariantCulture));
+                                    v = new Vertex3D(Convert.ToDouble(parts[1], CultureInfo.InvariantCulture), Convert.ToDouble(parts[3], CultureInfo.InvariantCulture), Convert.ToDouble(parts[2], CultureInfo.InvariantCulture), baseColor);
                                     break;
                             }                            
-                            vertices.Add(new Vertex3D(v.x * Drawer.objWidth / 2 + Drawer.objWidth / 2 + Drawer.offsetX, v.y * Drawer.objHeight / 2 + Drawer.objHeight / 2 + Drawer.offsetY, v.z * Drawer.objHeight / 2 + Drawer.objHeight / 2 + Drawer.offsetY));
+                            vertices.Add(new Vertex3D(v.x * Drawer.objWidth / 2 + Drawer.objWidth / 2 + Drawer.offsetX, v.y * Drawer.objHeight / 2 + Drawer.objHeight / 2 + Drawer.offsetY, v.z * Drawer.objHeight / 2 + Drawer.objHeight / 2 + Drawer.offsetY, baseColor));
                             break;
                         case "vn":
                             Normal3D vector = new Normal3D(0, 0, 0);
@@ -106,6 +106,7 @@ namespace WpfApp1
                     _vertices.Add(vertices[f.vertexIndex[i]]);
                     _edges.Add(new Edge(vertices[f.vertexIndex[i]], vertices[f.vertexIndex[(i + 1) % f.vertexIndex.Length]]));
                 }
+
                 polygons.Add(new Polygon(_vertices, _edges));
             }
         }
@@ -116,35 +117,48 @@ namespace WpfApp1
             public double y;
             public double z;
             public Normal3D N;
-            public System.Windows.Media.Color baseColor = Colors.Coral;
-            public System.Windows.Media.Color paintColor = Colors.Coral;
-            public bool isPixelSet = false;
+            public System.Windows.Media.Color baseColor;
+            public double CR { get => (double)baseColor.R / 255; }
+            public double CG { get => (double)baseColor.G / 255; }
+            public double CB { get => (double)baseColor.B / 255; }
+            public System.Windows.Media.Color paintColor;
 
-            public Vertex3D(double _x, double _y, double _z) { x = _x; y = _y; z = _z; N = new Normal3D(0, 0, 0); }
-            public static Vertex3D operator -(Vertex3D v1, Vertex3D v2) => new Vertex3D(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
+            public Vertex3D(double _x, double _y, double _z, Color _baseColor) 
+            { 
+                x = _x; 
+                y = _y; 
+                z = _z; 
+                N = new Normal3D(0, 0, 0);
+                baseColor = _baseColor;
+                paintColor = _baseColor;
+            }
         }
         internal class Normal3D
         {
             public double x;
             public double y;
             public double z;
-            public Normal3D(double _x, double _y, double _z) { x = _x; y = _y; z = _z; }
-            public static double DotProdcut(Normal3D n1, Normal3D n2) => n1.x * n2.x + n1.y * n2.y + n1.z * n2.z;
-            public static double DotProdcut2D(Normal3D n1, Normal3D n2) => n1.x * n2.x + n1.y * n2.y;
-            public static Normal3D operator *(double a, Normal3D n) => new Normal3D(a * n.x, a * n.y, a * n.z);
-            public static Normal3D operator -(Normal3D n1, Normal3D n2) => new Normal3D(n1.x - n2.x, n1.y - n2.y, n1.z - n2.z);
+            public Normal3D(double _x, double _y, double _z) 
+            {
+                x = _x; 
+                y = _y; 
+                z = _z;
+            }
             public void Normalize()
             {
                 double sum = Math.Abs(x) + Math.Abs(y) + Math.Abs(z);
-                x /= sum;
-                y /= sum;
-                z /= sum;
+                if (sum != 0)
+                {
+                    x /= sum;
+                    y /= sum;
+                    z /= sum;
+                }
             }
-        }
-        internal class Vector3D : Normal3D
-        {
-            public Vector3D(double _x, double _y, double _z) : base(_x, _y, _z) { }
-            public Vector3D(Vertex3D v1, Vertex3D v2) : base(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z) { }
+            public static double DotProdcut(Normal3D n1, Normal3D n2) => n1.x * n2.x + n1.y * n2.y + n1.z * n2.z;
+            //public static double DotProdcut(Normal3D n1, Normal3D n2) => -(n1.x * n2.x + n1.y * n2.y + n1.z * n2.z);
+            public static Normal3D operator *(double a, Normal3D n) => new Normal3D(a * n.x, a * n.y, a * n.z);
+            public static Normal3D operator -(Normal3D n1, Normal3D n2) => new Normal3D(n1.x - n2.x, n1.y - n2.y, n1.z - n2.z);
+            public static Normal3D operator +(Normal3D n1, Normal3D n2) => new Normal3D(n1.x + n2.x, n1.y + n2.y, n1.z + n2.z);
         }
         internal class Face
         {
@@ -158,7 +172,7 @@ namespace WpfApp1
             public Vertex3D u;
             public Vertex3D v;
 
-            public double yu, yl, x, _x, xl, w;
+            public double yu, yl, x, _x, w;
 
             public Edge(Vertex3D _u, Vertex3D _v)
             {
@@ -187,9 +201,6 @@ namespace WpfApp1
 
                 if (e != null)
                 {
-                    /*if (yl < e.yl) return -3;
-                    if (yl > e.yl) return 3;*/
-
                     if (x < e.x) return -2;
                     if (x > e.x) return 2;
 
@@ -206,7 +217,11 @@ namespace WpfApp1
         {
             public List<Vertex3D> vertices;
             public List<Edge> edges;
-            public Polygon(List<Vertex3D> _vertices, List<Edge> _edges) { vertices = _vertices; edges = _edges; }
+            public Polygon(List<Vertex3D> _vertices, List<Edge> _edges) 
+            { 
+                vertices = _vertices; 
+                edges = _edges; 
+            }
         }
     }
 }

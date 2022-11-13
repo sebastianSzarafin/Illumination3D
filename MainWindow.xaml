@@ -4,11 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="MainWindow" ResizeMode="NoResize" Height="616" Width="800">
-    <Window.Resources>
-        <local:PositionConverter x:Key="positionConverter"/>
-    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200"/>
@@ -21,13 +19,22 @@
         <Canvas x:Name="canvas" Grid.Column="2" Background="Black" Height="600" Width="600"/>
 
         <ScrollViewer HorizontalScrollBarVisibility="Auto">
-            <StackPanel Background="AliceBlue" Grid.Row="0" Grid.Column="0" CanVerticallyScroll="True">
-                <Button Height="50" Margin="10" Click="LoadFileEvent">Load file</Button>
-                <RadioButton IsChecked="True" Margin="0 0 0 8" HorizontalAlignment="Center" Click="XY_AxisProjEvent">XY axis proj.</RadioButton>
-                <RadioButton Margin="0 0 0 8" HorizontalAlignment="Center" Click="XZ_AxisProjEvent">XZ axis proj.</RadioButton>
+            <StackPanel Background="AliceBlue" Grid.Row="0" Grid.Column="0" CanVerticallyScroll="True" Width="180">
+                <Label Content="Load obj:"/>
+                <StackPanel>
+                    <Button Height="50" Margin="10" Click="LoadFileEvent">Load</Button>
+                    <RadioButton IsChecked="True" Margin="0 0 0 10" HorizontalAlignment="Center" Click="XY_AxisProjEvent">XY axis proj.</RadioButton>
+                    <RadioButton Margin="0 0 0 10" HorizontalAlignment="Center" Click="XZ_AxisProjEvent">XZ axis proj.</RadioButton>
+                </StackPanel>
 
                 <Separator/>
 
+                <Label Content="Load image:"/>
+                <Button Height="50" Margin="10" Click="LoadImageEvent">Load</Button>
+                
+                <Separator/>
+
+                <Label Content="Parameters:"/>
                 <DockPanel VerticalAlignment="Center" Margin="10">
                     <Label DockPanel.Dock="Left" FontWeight="Bold">kd:</Label>
                     <TextBox Text="{Binding ElementName=kdSlider, Path=Value, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" DockPanel.Dock="Right" TextAlignment="Center" VerticalAlignment="Center" Width="40" />
@@ -55,9 +62,42 @@
                 </DockPanel>
 
                 <Separator/>
+                
+                <Label Content="Color settings:"/>
+                <DockPanel Margin="10 0 10 10">
+                    <Label Content="Obj" HorizontalAlignment="Center"/>
+                    <ComboBox Name="objColors" SelectionChanged="ObjColorChangedEvent">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Ellipse Fill="{Binding Name}" Width="16" Height="16" Margin="5,2,5,2" />
+                                    <TextBlock Text="{Binding Name}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </DockPanel>
+                <DockPanel Margin="10 0 10 10">
+                    <Label Content="Sun" HorizontalAlignment="Center"/>
+                    <ComboBox Name="sunColors" SelectionChanged="SunColorChangedEvent">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Ellipse Fill="{Binding Name}" Width="16" Height="16" Margin="5,2,5,2" />
+                                    <TextBlock Text="{Binding Name}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </DockPanel>
 
-            
+                <Separator/>
 
+                <Label Content="Drawing settings:"/>
+                <StackPanel>
+                    <RadioButton IsChecked="True" Margin="25 0 0 10" HorizontalAlignment="Left" Click="InterpolateDrawEvent">Interpolation</RadioButton>
+                    <RadioButton Margin="25 0 0 10" HorizontalAlignment="Left" Click="DesignateDrawEvent">Explicit designation</RadioButton>
+                </StackPanel>
             </StackPanel>
 
         </ScrollViewer>
