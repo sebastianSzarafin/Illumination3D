@@ -76,6 +76,7 @@ namespace WpfApp1
                                     vector = new Normal3D(Convert.ToDouble(parts[1], CultureInfo.InvariantCulture), Convert.ToDouble(parts[3], CultureInfo.InvariantCulture), Convert.ToDouble(parts[2], CultureInfo.InvariantCulture));
                                     break;
                             }
+                            vector.Normalize();
                             normals.Add(vector);
                             break;
                         case "f":
@@ -105,6 +106,7 @@ namespace WpfApp1
                     _vertices.Add(vertices[f.vertexIndex[i]]);
                     _edges.Add(new Edge(vertices[f.vertexIndex[i]], vertices[f.vertexIndex[(i + 1) % f.vertexIndex.Length]]));
                 }
+
                 polygons.Add(new Polygon(_vertices, _edges));
             }
         }
@@ -116,8 +118,10 @@ namespace WpfApp1
             public double z;
             public Normal3D N;
             public System.Windows.Media.Color baseColor = Colors.Coral;
+            public double CR { get => (double)baseColor.R / 255; }
+            public double CG { get => (double)baseColor.G / 255; }
+            public double CB { get => (double)baseColor.B / 255; }
             public System.Windows.Media.Color paintColor = Colors.Coral;
-            public bool isPixelSet = false;
 
             public Vertex3D(double _x, double _y, double _z) { x = _x; y = _y; z = _z; N = new Normal3D(0, 0, 0); }
             public static Vertex3D operator -(Vertex3D v1, Vertex3D v2) => new Vertex3D(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
@@ -132,8 +136,11 @@ namespace WpfApp1
                 x = _x; 
                 y = _y; 
                 z = _z;
-                double sum = Math.Abs(_x) + Math.Abs(_y) + Math.Abs(_z);
-                if(sum != 0)
+            }
+            public void Normalize()
+            {
+                double sum = Math.Abs(x) + Math.Abs(y) + Math.Abs(z);
+                if (sum != 0)
                 {
                     x /= sum;
                     y /= sum;
@@ -141,15 +148,11 @@ namespace WpfApp1
                 }
             }
             public static double DotProdcut(Normal3D n1, Normal3D n2) => n1.x * n2.x + n1.y * n2.y + n1.z * n2.z;
+            //public static double DotProdcut(Normal3D n1, Normal3D n2) => -(n1.x * n2.x + n1.y * n2.y + n1.z * n2.z);
             public static Normal3D operator *(double a, Normal3D n) => new Normal3D(a * n.x, a * n.y, a * n.z);
             public static Normal3D operator -(Normal3D n1, Normal3D n2) => new Normal3D(n1.x - n2.x, n1.y - n2.y, n1.z - n2.z);
             public static Normal3D operator +(Normal3D n1, Normal3D n2) => new Normal3D(n1.x + n2.x, n1.y + n2.y, n1.z + n2.z);
         }
-        /*internal class Vector3D : Normal3D
-        {
-            public Vector3D(double _x, double _y, double _z) : base(_x, _y, _z) { }
-            public Vector3D(Vertex3D v1, Vertex3D v2) : base(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z) { }
-        }*/
         internal class Face
         {
             public int[] vertexIndex;
@@ -162,7 +165,7 @@ namespace WpfApp1
             public Vertex3D u;
             public Vertex3D v;
 
-            public double yu, yl, x, _x, xl, w;
+            public double yu, yl, x, _x, w;
 
             public Edge(Vertex3D _u, Vertex3D _v)
             {
@@ -191,9 +194,6 @@ namespace WpfApp1
 
                 if (e != null)
                 {
-                    /*if (yl < e.yl) return -3;
-                    if (yl > e.yl) return 3;*/
-
                     if (x < e.x) return -2;
                     if (x > e.x) return 2;
 
@@ -210,7 +210,11 @@ namespace WpfApp1
         {
             public List<Vertex3D> vertices;
             public List<Edge> edges;
-            public Polygon(List<Vertex3D> _vertices, List<Edge> _edges) { vertices = _vertices; edges = _edges; }
+            public Polygon(List<Vertex3D> _vertices, List<Edge> _edges) 
+            { 
+                vertices = _vertices; 
+                edges = _edges; 
+            }
         }
     }
 }

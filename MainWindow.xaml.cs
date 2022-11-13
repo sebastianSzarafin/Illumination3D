@@ -47,7 +47,6 @@ namespace WpfApp1
         public MainWindow()
         {
             InitializeComponent();
-            string s = defaultVertexColor.ToString();
             canvas.Children.Add(drawer.bitmapImage);
             objColors.ItemsSource = typeof(Colors).GetProperties();
             objColors.SelectedItem = typeof(Colors).GetProperty("Coral");

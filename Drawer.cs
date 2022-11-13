@@ -12,6 +12,7 @@ using System.ComponentModel.Design;
 using static WpfApp1.MainWindow;
 using System.Windows.Documents;
 using System.IO.Packaging;
+using System.Windows.Shapes;
 
 namespace WpfApp1
 {
@@ -66,6 +67,22 @@ namespace WpfApp1
             }
             objParser = new ObjParser();
             objParser.LoadObj(fileName, projection);
+            /*objParser.vertices = new List<Vertex3D>() { new Vertex3D(300, 300, 600), new Vertex3D(400, 400, 600), new Vertex3D(200, 400, 600) };
+            //objParser.vertices = new List<Vertex3D>() { new Vertex3D(300, 300, 600), new Vertex3D(200, 400, 600), new Vertex3D(400, 400, 600) };
+            objParser.vertices[0].baseColor = Colors.Red; objParser.vertices[0].paintColor = Colors.Red;
+            objParser.vertices[0].N = new Normal3D(0, 0, 1);
+            objParser.vertices[1].baseColor = Colors.Green; objParser.vertices[1].paintColor = Colors.Green;
+            objParser.vertices[1].N = new Normal3D(0, 0, 1);
+            objParser.vertices[2].baseColor = Colors.Blue; objParser.vertices[2].paintColor = Colors.Blue;
+            objParser.vertices[2].N = new Normal3D(0, 0, 1);
+
+            List<Edge> edges = new List<Edge>();
+            for (int i = 0; i < 3; i++)
+            {
+                edges.Add(new Edge(objParser.vertices[i], objParser.vertices[(i + 1) % 3]));
+            }
+
+            objParser.polygons.Add(new ObjParser.Polygon(objParser.vertices, edges));*/
         }
     }
 }

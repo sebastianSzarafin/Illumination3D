@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,9 @@ namespace WpfApp1
     internal class Sun
     {
         public Color color;
+        public double CR { get => (double)color.R / 255; }
+        public double CG { get => (double)color.G / 255; }
+        public double CB { get => (double)color.B / 255; }
         public int centreX, centreY;
         public double x, y, z;
         public DispatcherTimer timer;
@@ -31,7 +35,7 @@ namespace WpfApp1
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(10);
             timer.Tick += SunTimerEvent;
-            trajectory = GetTrajectory(0.05, 15, 10);
+            trajectory = GetTrajectory(0.05, 15, 5);
         }
 
         void SunTimerEvent(object sender, EventArgs e)
@@ -42,6 +46,8 @@ namespace WpfApp1
                 direction = -1;
             if (trI == 0) direction = 1;
             trI += direction;
+
+            //Debug.WriteLine($"x: {x}, y: {y}");
 
             Drawer.Redraw(drawer, this);
         }
@@ -54,7 +60,7 @@ namespace WpfApp1
             double theta = 0;
             double radius = 0;
 
-            while (X > 0 && X < Drawer.bitmapHeight && Y > 0 && Y < Drawer.bitmapWidth && theta <= (revolutions * 360))
+            while (theta <= (revolutions * 360))
             {
                 theta += delta;
 
@@ -67,9 +73,9 @@ namespace WpfApp1
             }
             trajectory = trajectory.Distinct().ToList();
 
+            radius = 5000;
             int loops = 10;
-            double startTheta = theta;
-            while(theta - startTheta < 360 * loops)
+            while(theta <= (loops + revolutions) * 360)
             {
                 theta += delta;
 
