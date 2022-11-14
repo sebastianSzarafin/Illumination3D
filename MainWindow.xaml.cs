@@ -76,6 +76,20 @@ namespace WpfApp1
                 Drawer.Redraw(drawer, sun);
             }
         }
+        void LoadNormalMapEvent(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog();
+            dialog.Filter = "Image files (*.png;*.jpeg)|*.png;*.jpeg";
+
+            bool? result = dialog.ShowDialog();
+
+            if (result == true)
+            {
+                BitmapImage myImage = new BitmapImage(new Uri(dialog.FileName, UriKind.Absolute));
+                drawer.ProcessNormalMap(myImage);
+                Drawer.Redraw(drawer, sun);
+            }
+        }
         void XY_AxisProjEvent(object sender, RoutedEventArgs e) => projection = Projection.XY;
         void XZ_AxisProjEvent(object sender, RoutedEventArgs e) => projection = Projection.XZ;
 

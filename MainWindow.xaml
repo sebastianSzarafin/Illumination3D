@@ -31,7 +31,12 @@
 
                 <Label Content="Load image:"/>
                 <Button Height="50" Margin="10" Click="LoadImageEvent">Load</Button>
-                
+
+                <Separator/>
+
+                <Label Content="Load normal map:"/>
+                <Button Height="50" Margin="10" Click="LoadNormalMapEvent">Load</Button>
+
                 <Separator/>
 
                 <Label Content="Parameters:"/>

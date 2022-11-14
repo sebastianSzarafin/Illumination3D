@@ -29,6 +29,7 @@ namespace WpfApp1
         public WriteableBitmap bitmap;
         public byte[,,] pixels;
         public byte[,,] extImagePixels;
+        public byte[,,] extNormalMapPixels;
         public byte[] pixels1d;
         public Int32Rect rect;
         public static int stride = 4 * bitmapWidth;
@@ -36,6 +37,7 @@ namespace WpfApp1
         public DrawOption drawOption;
         public Color defaultVertexColor;
         public bool isExtImageSet = false;
+        public bool isNormalMapSet = false;
 
         public Drawer(double _kd, double _ks, int _m, DrawOption _drawOption, Color _defaultVertexColor)
         {
@@ -45,6 +47,7 @@ namespace WpfApp1
             bitmap = new WriteableBitmap(bitmapWidth, bitmapHeight, 96, 96, PixelFormats.Bgra32, null);
             pixels = new byte[bitmapHeight, bitmapWidth, 4];
             extImagePixels = new byte[bitmapHeight, bitmapWidth, 4];
+            extNormalMapPixels = new byte[bitmapHeight, bitmapWidth, 4];
             pixels1d = new byte[bitmapHeight * bitmapWidth * 4];
             rect = new Int32Rect(0, 0, bitmapWidth, bitmapHeight);
             bitmapImage = new Image();
@@ -104,6 +107,47 @@ namespace WpfApp1
             }
             
             isExtImageSet = true;
+        }
+        public void ProcessNormalMap(BitmapImage bitmapImage)
+        {
+            int bitmapImageStride = bitmapImage.PixelWidth * 4;
+            int bitmapImageSize = bitmapImage.PixelHeight * bitmapImageStride;
+            byte[] bitmapNormalMapPixels = new byte[bitmapImageSize];
+            bitmapImage.CopyPixels(bitmapNormalMapPixels, bitmapImageStride, 0);
+
+            for (int row = 0; row < bitmapImage.PixelHeight; row++)
+            {
+                for (int col = 0; col < bitmapImage.PixelWidth; col++)
+                {
+                    int index = row * bitmapImageStride + 4 * col;
+                    extNormalMapPixels[row + offsetY, col + offsetX, 0] = bitmapNormalMapPixels[index];
+                    extNormalMapPixels[row + offsetY, col + offsetX, 1] = bitmapNormalMapPixels[index + 1];
+                    extNormalMapPixels[row + offsetY, col + offsetX, 2] = bitmapNormalMapPixels[index + 2];
+                    extNormalMapPixels[row + offsetY, col + offsetX, 3] = bitmapNormalMapPixels[index + 3];
+                }
+            }
+
+            if (objParser != null)
+            {
+                foreach (Vertex3D v in objParser.vertices)
+                {
+                    Normal3D Nt = new Normal3D(
+                        ((double)extNormalMapPixels[(int)v.y, (int)v.x, 2] - 127) / 128,
+                        ((double)extNormalMapPixels[(int)v.y, (int)v.x, 1] - 127) / 128,
+                        (double)extNormalMapPixels[(int)v.y, (int)v.x, 0] / 255
+                        );
+                    Normal3D B = v.N.x == 0 && v.N.y == 0 && v.N.z == 1 ? new Normal3D(0, 1, 0) : Nt * new Normal3D(0, 0, 1);
+                    Normal3D T = B * v.N;
+
+                    Normal3D oldN = new Normal3D(v.N.x, v.N.y, v.N.z);
+                    v.N = new Normal3D(
+                        T.x * Nt.x + B.x * Nt.y + oldN.x * Nt.z,
+                        T.y * Nt.x + B.y * Nt.y + oldN.y * Nt.z,
+                        T.z * Nt.x + B.z * Nt.y + oldN.z * Nt.z);
+                }
+            }
+
+            isNormalMapSet = true;
         }
     }
 }
