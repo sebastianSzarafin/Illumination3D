@@ -119,6 +119,24 @@ namespace WpfApp1
 
             double z = c * v1.z + b * v2.z + a * v3.z;
             Normal3D N = c * v1.N + b * v2.N + a * v3.N;
+
+            if(drawer.isNormalMapSet)
+            {
+                Normal3D Nt = new Normal3D(
+                        ((double)drawer.extNormalMapPixels[(int)y, (int)x, 2] - 127) / 128,
+                        ((double)drawer.extNormalMapPixels[(int)y, (int)x, 1] - 127) / 128,
+                        (double)drawer.extNormalMapPixels[(int)y, (int)x, 0] / 255
+                        );
+                Normal3D B = N.x == 0 && N.y == 0 && N.z == 1 ? new Normal3D(0, 1, 0) : Nt * new Normal3D(0, 0, 1);
+                Normal3D T = B * N;
+
+                Normal3D oldN = new Normal3D(N.x, N.y, N.z);
+                N = new Normal3D(
+                    T.x * Nt.x + B.x * Nt.y + oldN.x * Nt.z,
+                    T.y * Nt.x + B.y * Nt.y + oldN.y * Nt.z,
+                    T.z * Nt.x + B.z * Nt.y + oldN.z * Nt.z);
+            }
+
             SetPixelColor(x, y, z, N, drawer, sun);
         }
         static double CrossProduct2D(double x1, double y1, double x2, double y2) => Math.Abs(x1 * y2 - y1 * x2);
