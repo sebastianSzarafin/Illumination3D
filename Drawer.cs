@@ -4,6 +4,8 @@ using System.Windows;
 using System.Windows.Controls;
 using static WpfApp1.ObjParser;
 using static WpfApp1.MainWindow;
+using System.Collections.Generic;
+using System.Windows.Shapes;
 
 namespace WpfApp1
 {
@@ -27,6 +29,7 @@ namespace WpfApp1
         public Color defaultVertexColor;
         public bool isExtImageSet = false;
         public bool isNormalMapSet = false;
+        public List<Line> mesh;
 
         public Drawer(double _kd, double _ks, int _m, DrawOption _drawOption, Color _defaultVertexColor)
         {
@@ -45,6 +48,7 @@ namespace WpfApp1
             bitmapImage.Source = bitmap;
             drawOption = _drawOption;
             defaultVertexColor = _defaultVertexColor;
+            mesh = new List<Line>();
         }
 
         public static void Redraw(Drawer drawer, Sun sun)
@@ -65,6 +69,8 @@ namespace WpfApp1
             }
             objParser = new ObjParser();
             objParser.LoadObj(fileName, projection, defaultVertexColor);
+
+            GetMesh();
         }
         public void ProcessImage(BitmapImage bitmapImage)
         {
@@ -150,6 +156,26 @@ namespace WpfApp1
                         T.z * Nt.x + B.z * Nt.y + oldN.z * Nt.z);
                 }
                 else v.N = new Normal3D(v.Nobj);
+            }
+        }
+        void GetMesh()
+        {
+            if (objParser == null) return;
+
+            foreach(ObjParser.Polygon polygon in objParser.polygons)
+            {
+                foreach(Edge edge in polygon.edges)
+                {
+                    Line line = new Line();
+                    Panel.SetZIndex(line, 1);
+                    line.X1 = edge.u.x;
+                    line.Y1 = edge.u.y;
+                    line.X2 = edge.v.x;
+                    line.Y2 = edge.v.y;
+                    line.Stroke = Brushes.Black;
+                    line.StrokeThickness = 2;
+                    mesh.Add(line);
+                }
             }
         }
     }

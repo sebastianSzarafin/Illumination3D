@@ -29,11 +29,19 @@
 
                 <Separator/>
 
+                <Label Content="Mesh:"/>
+                <DockPanel HorizontalAlignment="Center" Margin="0 0 0 10">
+                    <RadioButton Margin="0 0 10 0" IsChecked="True" Click="NotUseMeshEvent">Off</RadioButton>
+                    <RadioButton Margin="10 0 0 0" Click="UseMeshEvent">On</RadioButton>
+                </DockPanel>
+
+                <Separator/>
+
                 <Label Content="Load image:"/>
                 <Button Height="40" Margin="10" Click="LoadImageEvent">Load</Button>
                 <DockPanel HorizontalAlignment="Center" Margin="0 0 0 10">
                     <RadioButton Margin="0 0 10 0" Click="NotUseImageEvent">Off</RadioButton>
-                    <RadioButton Margin="10 0 0 0" IsChecked="True" Click="UseImageEvent">On</RadioButton>
+                    <RadioButton Margin="10 0 0 0" Name="useImageOnButton" IsChecked="True" Click="UseImageEvent">On</RadioButton>
                 </DockPanel>
 
                 <Separator/>
@@ -42,7 +50,7 @@
                 <Button Height="40" Margin="10" Click="LoadNormalMapEvent">Load</Button>
                 <DockPanel HorizontalAlignment="Center" Margin="0 0 0 10">
                     <RadioButton Margin="0 0 10 0" Click="NotUseNormalMapEvent">Off</RadioButton>
-                    <RadioButton Margin="10 0 0 0" IsChecked="True" Click="UseNormalMapEvent">On</RadioButton>
+                    <RadioButton Margin="10 0 0 0" Name="useNormalMapOnButton" IsChecked="True" Click="UseNormalMapEvent">On</RadioButton>
                 </DockPanel>
 
                 <Separator/>

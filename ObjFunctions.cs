@@ -169,7 +169,7 @@ namespace WpfApp1
             L.Normalize();
             double cosNL = Math.Max(Normal3D.DotProdcut(v.N, L), 0);
             Normal3D R = 2 * cosNL * v.N - L;
-            //R.Normalize();
+            R.Normalize();
             double cosVR = Math.Max(Normal3D.DotProdcut(V, R), 0);
 
             double cosVRtoM = Math.Pow(cosVR, drawer.m);
@@ -206,7 +206,7 @@ namespace WpfApp1
             L.Normalize();
             double cosNL = Math.Max(Normal3D.DotProdcut(N, L), 0);
             Normal3D R = 2 * cosNL * N - L;
-            //R.Normalize();
+            R.Normalize();
             double cosVR = Math.Max(Normal3D.DotProdcut(V, R), 0);
 
             double cosVRtoM = Math.Pow(cosVR, drawer.m);

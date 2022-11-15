@@ -4,7 +4,8 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Reflection;
-
+using System.Collections.Generic;
+using System.Windows.Shapes;
 
 namespace WpfApp1
 {
@@ -60,6 +61,7 @@ namespace WpfApp1
                 BitmapImage myImage = new BitmapImage(new Uri(dialog.FileName, UriKind.Absolute));
                 drawer.ProcessImage(myImage);
                 Drawer.Redraw(drawer, sun);
+                useImageOnButton.IsChecked = true;
             }
         }
         void UseImageEvent(object sender, RoutedEventArgs e)
@@ -84,6 +86,7 @@ namespace WpfApp1
                 BitmapImage myImage = new BitmapImage(new Uri(dialog.FileName, UriKind.Absolute));
                 drawer.ProcessNormalMap(myImage);
                 Drawer.Redraw(drawer, sun);
+                useNormalMapOnButton.IsChecked = true;
             }
         }
         void UseNormalMapEvent(object sender, RoutedEventArgs e)
@@ -139,6 +142,7 @@ namespace WpfApp1
         {
             if (drawer.objParser == null) return;
             drawer.defaultVertexColor = (Color)(objColors.SelectedItem as PropertyInfo).GetValue(null, null);
+            drawer.UpdateVerticesColor();
             Drawer.Redraw(drawer, sun);
         }
         private void SunColorChangedEvent(object sender, SelectionChangedEventArgs e)
@@ -159,6 +163,26 @@ namespace WpfApp1
             drawOption = DrawOption.designate;
             drawer.drawOption = drawOption;
             Drawer.Redraw(drawer, sun);
+        }
+
+        void UseMeshEvent(object sender, RoutedEventArgs e)
+        {
+            foreach(Line line in drawer.mesh)
+            {
+                canvas.Children.Add(line);
+            }
+        }
+        void NotUseMeshEvent(object sender, RoutedEventArgs e)
+        {
+            List<UIElement> itemstoremove = new List<UIElement>();
+            foreach (UIElement ui in canvas.Children)
+            {
+                if (ui is Line) itemstoremove.Add(ui);
+            }
+            foreach (UIElement ui in itemstoremove)
+            {
+                canvas.Children.Remove(ui);
+            }
         }
     }
 }
