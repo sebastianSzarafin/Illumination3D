@@ -1,29 +1,8 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
-using System.Diagnostics;
-//using System.Drawing;
 using System.Globalization;
 using System.IO;
-using System.IO.IsolatedStorage;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Security.Cryptography.Xml;
-using System.Text;
-using System.Threading.Tasks;
-using System.Transactions;
-using System.Windows.Controls;
-using System.Windows.Markup;
 using System.Windows.Media;
-using System.Windows.Media.Media3D;
-using System.Windows.Media.Imaging;
-//using System.Windows.Shapes;
-using static WpfApp1.ObjParser;
-using System.Windows;
-using System.Windows.Ink;
-using System.Printing.IndexedProperties;
-//using System.Windows.Shapes;
-//using System.Windows.Shapes;
 
 namespace WpfApp1
 {

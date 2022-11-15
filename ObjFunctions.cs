@@ -1,15 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
 using static WpfApp1.ObjParser;
-using System.Windows.Media.Imaging;
-using System.Windows;
-using System.Windows.Controls;
-//using System.Windows.Shapes;
 
 namespace WpfApp1
 {

@@ -1,20 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
+﻿using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using System.Windows;
 using System.Windows.Controls;
 using static WpfApp1.ObjParser;
-using System.ComponentModel.Design;
 using static WpfApp1.MainWindow;
-using System.Windows.Documents;
-using System.IO.Packaging;
-using System.Windows.Shapes;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 
 namespace WpfApp1
 {
