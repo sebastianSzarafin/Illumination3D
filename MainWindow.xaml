@@ -30,12 +30,20 @@
                 <Separator/>
 
                 <Label Content="Load image:"/>
-                <Button Height="50" Margin="10" Click="LoadImageEvent">Load</Button>
+                <StackPanel>
+                    <Button Height="50" Margin="10" Click="LoadImageEvent">Load</Button>
+                    <RadioButton IsChecked="True" Margin="0 0 0 10" HorizontalAlignment="Center" Click="UseImageEvent">Use</RadioButton>
+                    <RadioButton Margin="0 0 0 10" HorizontalAlignment="Center" Click="NotUseImageEvent">Not use</RadioButton>
+                </StackPanel>
 
                 <Separator/>
 
                 <Label Content="Load normal map:"/>
-                <Button Height="50" Margin="10" Click="LoadNormalMapEvent">Load</Button>
+                <StackPanel>
+                    <Button Height="50" Margin="10" Click="LoadNormalMapEvent">Load</Button>
+                    <RadioButton IsChecked="True" Margin="0 0 0 10" HorizontalAlignment="Center" Click="UseNormalMapEvent">Use</RadioButton>
+                    <RadioButton Margin="0 0 0 10" HorizontalAlignment="Center" Click="NotUseNormalMapEvent">Not use</RadioButton>
+                </StackPanel>
 
                 <Separator/>
 
@@ -53,7 +61,7 @@
                 <DockPanel VerticalAlignment="Center" Margin="10">
                     <Label DockPanel.Dock="Left" FontWeight="Bold">m:</Label>
                     <TextBox Text="{Binding ElementName=mSlider, Path=Value, UpdateSourceTrigger=PropertyChanged, StringFormat=N0}" DockPanel.Dock="Right" TextAlignment="Center" VerticalAlignment="Center" Width="40" />
-                    <Slider Maximum="100" Minimum="1" Value="50" VerticalAlignment="Center" TickFrequency="1" IsSnapToTickEnabled="True" Name="mSlider" ValueChanged="mSlider_ValueChanged" />
+                    <Slider Maximum="100" Minimum="1" Value="10" VerticalAlignment="Center" TickFrequency="1" IsSnapToTickEnabled="True" Name="mSlider" ValueChanged="mSlider_ValueChanged" />
                 </DockPanel>
 
                 <Separator/>

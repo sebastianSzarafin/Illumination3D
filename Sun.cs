@@ -35,7 +35,7 @@ namespace WpfApp1
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(10);
             timer.Tick += SunTimerEvent;
-            trajectory = GetTrajectory(0.05, 15, 5);
+            trajectory = GetTrajectory(0.05, 15, 15);
         }
 
         void SunTimerEvent(object sender, EventArgs e)
@@ -51,14 +51,14 @@ namespace WpfApp1
 
             Drawer.Redraw(drawer, this);
         }
-        // Trajectory with moving on circle only 
-        List<(int x, int y)> GetTrajectory(double scale, double delta, double revolutions)
+        // Trajectory with moving on only 
+        /*List<(int x, int y)> GetTrajectory(double scale, double delta, double revolutions)
         {
             List<(int x, int y)> trajectory = new List<(int x, int y)>();
             double X = centreX;
             double Y = centreY;
             double theta = 0;
-            double radius = 5000;
+            double radius = 500;
             int loops = 10;
             while(theta <= (loops + revolutions) * 360)
             {
@@ -74,10 +74,10 @@ namespace WpfApp1
             y = trajectory[0].y;
 
             return trajectory;
-        }
+        }*/
 
         // Trajectory with moving on spiral
-        /*List<(int x, int y)> GetTrajectory(double scale, double delta, double revolutions)
+        List<(int x, int y)> GetTrajectory(double scale, double delta, double revolutions)
         {
             List<(int x, int y)> trajectory = new List<(int x, int y)>();
             double X = centreX;
@@ -99,18 +99,7 @@ namespace WpfApp1
             }
             trajectory = trajectory.Distinct().ToList();
 
-            int loops = 10;
-            while (theta <= (loops + revolutions) * 360)
-            {
-                theta += delta;
-
-                X = (radius * Math.Cos(theta / 180 * Math.PI)) + centreX;
-                Y = (radius * Math.Sin(theta / 180 * Math.PI)) + centreY;
-
-                trajectory.Add(((int)X, (int)Y));
-            }
-
             return trajectory;
-        }*/
+        }
     }
 }

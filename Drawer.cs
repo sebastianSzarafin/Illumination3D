@@ -96,17 +96,8 @@ namespace WpfApp1
                 }
             }
 
-            if(objParser != null)
-            {
-                foreach (Vertex3D v in objParser.vertices)
-                {
-                    v.baseColor.R = extImagePixels[(int)v.y, (int)v.x, 2];
-                    v.baseColor.G = extImagePixels[(int)v.y, (int)v.x, 1];
-                    v.baseColor.B = extImagePixels[(int)v.y, (int)v.x, 0];
-                }
-            }
-            
             isExtImageSet = true;
+            UpdateVerticesColor();
         }
         public void ProcessNormalMap(BitmapImage bitmapImage)
         {
@@ -127,15 +118,39 @@ namespace WpfApp1
                 }
             }
 
-            if (objParser != null)
+            isNormalMapSet = true;
+            UpdateVerticesNormalVector();
+        }
+        public void UpdateVerticesColor()
+        {
+            if (objParser == null) return;
+            foreach(Vertex3D v in objParser.vertices)
+            { 
+                if (isExtImageSet)
+                {
+                    v.baseColor.R = extImagePixels[(int)v.y, (int)v.x, 2];
+                    v.baseColor.G = extImagePixels[(int)v.y, (int)v.x, 1];
+                    v.baseColor.B = extImagePixels[(int)v.y, (int)v.x, 0];
+                }
+                else
+                {
+                    v.baseColor.R = defaultVertexColor.R;
+                    v.baseColor.G = defaultVertexColor.G;
+                    v.baseColor.B = defaultVertexColor.B;
+                }
+            }
+        }
+        public void UpdateVerticesNormalVector()
+        {
+            if (objParser == null) return;
+            foreach (Vertex3D v in objParser.vertices)
             {
-                foreach (Vertex3D v in objParser.vertices)
+                if (isNormalMapSet)
                 {
                     Normal3D Nt = new Normal3D(
-                        ((double)extNormalMapPixels[(int)v.y, (int)v.x, 2] - 127) / 128,
-                        ((double)extNormalMapPixels[(int)v.y, (int)v.x, 1] - 127) / 128,
-                        (double)extNormalMapPixels[(int)v.y, (int)v.x, 0] / 255
-                        );
+                                ((double)extNormalMapPixels[(int)v.y, (int)v.x, 2] - 127) / 128,
+                                ((double)extNormalMapPixels[(int)v.y, (int)v.x, 1] - 127) / 128,
+                                (double)extNormalMapPixels[(int)v.y, (int)v.x, 0] / 255);
                     Normal3D B = v.N.x == 0 && v.N.y == 0 && v.N.z == 1 ? new Normal3D(0, 1, 0) : Nt * new Normal3D(0, 0, 1);
                     Normal3D T = B * v.N;
 
@@ -145,9 +160,8 @@ namespace WpfApp1
                         T.y * Nt.x + B.y * Nt.y + oldN.y * Nt.z,
                         T.z * Nt.x + B.z * Nt.y + oldN.z * Nt.z);
                 }
+                else v.N = new Normal3D(v.Nobj);
             }
-
-            isNormalMapSet = true;
         }
     }
 }
