@@ -1,24 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Threading;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Media.Media3D;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Reflection;
-
+using System.Collections.Generic;
+using System.Windows.Shapes;
 
 namespace WpfApp1
 {
@@ -31,7 +18,7 @@ namespace WpfApp1
     {
         static Color defaultVertexColor = Colors.Coral;
         static Color defaultSunColor = Colors.White;
-        static Drawer drawer = new Drawer(0.5, 0.5, 50, drawOption, defaultVertexColor);
+        static Drawer drawer = new Drawer(0.5, 0.5, 10, drawOption, defaultVertexColor);
         static Sun sun = new Sun(defaultSunColor, Drawer.objWidth / 2 + Drawer.offsetX, Drawer.objHeight / 2 + Drawer.offsetY, 1000, drawer);
         public static Projection projection = Projection.XY;
         public enum Projection { XY, XZ };
@@ -74,8 +61,19 @@ namespace WpfApp1
                 BitmapImage myImage = new BitmapImage(new Uri(dialog.FileName, UriKind.Absolute));
                 drawer.ProcessImage(myImage);
                 Drawer.Redraw(drawer, sun);
+                useImageOnButton.IsChecked = true;
             }
         }
+        void UseImageEvent(object sender, RoutedEventArgs e)
+        {
+            drawer.isExtImageSet = true;
+            drawer.UpdateVerticesColor();
+        }
+        void NotUseImageEvent(object sender, RoutedEventArgs e)
+        {
+            drawer.isExtImageSet = false;
+            drawer.UpdateVerticesColor();
+        }        
         void LoadNormalMapEvent(object sender, RoutedEventArgs e)
         {
             var dialog = new Microsoft.Win32.OpenFileDialog();
@@ -88,7 +86,18 @@ namespace WpfApp1
                 BitmapImage myImage = new BitmapImage(new Uri(dialog.FileName, UriKind.Absolute));
                 drawer.ProcessNormalMap(myImage);
                 Drawer.Redraw(drawer, sun);
+                useNormalMapOnButton.IsChecked = true;
             }
+        }
+        void UseNormalMapEvent(object sender, RoutedEventArgs e)
+        {
+            drawer.isNormalMapSet = true;
+            drawer.UpdateVerticesNormalVector();
+        }
+        void NotUseNormalMapEvent(object sender, RoutedEventArgs e)
+        {
+            drawer.isNormalMapSet = false;
+            drawer.UpdateVerticesNormalVector();
         }
         void XY_AxisProjEvent(object sender, RoutedEventArgs e) => projection = Projection.XY;
         void XZ_AxisProjEvent(object sender, RoutedEventArgs e) => projection = Projection.XZ;
@@ -132,17 +141,13 @@ namespace WpfApp1
         private void ObjColorChangedEvent(object sender, SelectionChangedEventArgs e)
         {
             if (drawer.objParser == null) return;
-            Color vertexColor = (Color)(objColors.SelectedItem as PropertyInfo).GetValue(null, null);
-            foreach (ObjParser.Vertex3D v in drawer.objParser.vertices)
-            {
-                v.baseColor = vertexColor;
-            }
+            drawer.defaultVertexColor = (Color)(objColors.SelectedItem as PropertyInfo).GetValue(null, null);
+            drawer.UpdateVerticesColor();
             Drawer.Redraw(drawer, sun);
         }
         private void SunColorChangedEvent(object sender, SelectionChangedEventArgs e)
         {
-            Color sunColor = (Color)(sunColors.SelectedItem as PropertyInfo).GetValue(null, null);
-            sun.color = sunColor;
+            sun.color = (Color)(sunColors.SelectedItem as PropertyInfo).GetValue(null, null);
             Drawer.Redraw(drawer, sun);
         }
 
@@ -158,6 +163,26 @@ namespace WpfApp1
             drawOption = DrawOption.designate;
             drawer.drawOption = drawOption;
             Drawer.Redraw(drawer, sun);
+        }
+
+        void UseMeshEvent(object sender, RoutedEventArgs e)
+        {
+            foreach(Line line in drawer.mesh)
+            {
+                canvas.Children.Add(line);
+            }
+        }
+        void NotUseMeshEvent(object sender, RoutedEventArgs e)
+        {
+            List<UIElement> itemstoremove = new List<UIElement>();
+            foreach (UIElement ui in canvas.Children)
+            {
+                if (ui is Line) itemstoremove.Add(ui);
+            }
+            foreach (UIElement ui in itemstoremove)
+            {
+                canvas.Children.Remove(ui);
+            }
         }
     }
 }

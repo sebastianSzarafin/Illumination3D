@@ -1,15 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
 using static WpfApp1.ObjParser;
-using System.Windows.Media.Imaging;
-using System.Windows;
-using System.Windows.Controls;
-//using System.Windows.Shapes;
 
 namespace WpfApp1
 {
@@ -62,7 +54,6 @@ namespace WpfApp1
             }
 
             Vertex3D v1 = polygon.vertices[0], v2 = polygon.vertices[1], v3 = polygon.vertices[2];
-            double P = CrossProduct2D(v2.x - v1.x, v2.y - v1.y, v3.x - v1.x, v3.y - v1.y);
 
             CreateET(ET, polygon.edges);
             List<Edge> AET = new List<Edge>();
@@ -84,10 +75,10 @@ namespace WpfApp1
                         switch (drawer.drawOption)
                         {
                             case MainWindow.DrawOption.interpolate:
-                                SetPixelByInterpolation(v1, v2, v3, P, x, y, drawer.pixels);
+                                SetPixelByInterpolation(v1, v2, v3, x, y, drawer.pixels);
                                 break;
                             case MainWindow.DrawOption.designate:
-                                SetPixelExplicitly(v1, v2, v3, P, x, y, drawer, sun);
+                                SetPixelExplicitly(v1, v2, v3, x, y, drawer, sun);
                                 break;
                         }
                     }
@@ -101,21 +92,29 @@ namespace WpfApp1
 
             foreach (Edge e in polygon.edges) e.x = e._x;
         }
-        static void SetPixelByInterpolation(Vertex3D v1, Vertex3D v2, Vertex3D v3, double P, int x, int y, byte[,,] pixels)
+        static void SetPixelByInterpolation(Vertex3D v1, Vertex3D v2, Vertex3D v3, int x, int y, byte[,,] pixels)
         {
-            double a = CrossProduct2D(v1.x - x, v1.y - y, v2.x - x, v2.y - y) / P;
-            double b = CrossProduct2D(v1.x - x, v1.y - y, v3.x - x, v3.y - y) / P;
-            double c = Math.Max(1 - a - b, 0);
+            double P1 = CrossProduct2D(v1.x - x, v1.y - y, v2.x - x, v2.y - y);
+            double P2 = CrossProduct2D(v1.x - x, v1.y - y, v3.x - x, v3.y - y);
+            double P3 = CrossProduct2D(v2.x - x, v2.y - y, v3.x - x, v3.y - y);
+
+            double a = P1 / (P1 + P2 + P3);
+            double b = P2 / (P1 + P2 + P3);
+            double c = P3 / (P1 + P2 + P3);
 
             pixels[y, x, 2] = (byte)(c * v1.paintColor.R + b * v2.paintColor.R + a * v3.paintColor.R);
             pixels[y, x, 1] = (byte)(c * v1.paintColor.G + b * v2.paintColor.G + a * v3.paintColor.G);
             pixels[y, x, 0] = (byte)(c * v1.paintColor.B + b * v2.paintColor.B + a * v3.paintColor.B);
         }
-        static void SetPixelExplicitly(Vertex3D v1, Vertex3D v2, Vertex3D v3, double P, int x, int y, Drawer drawer, Sun sun)
+        static void SetPixelExplicitly(Vertex3D v1, Vertex3D v2, Vertex3D v3, int x, int y, Drawer drawer, Sun sun)
         {
-            double a = CrossProduct2D(v1.x - x, v1.y - y, v2.x - x, v2.y - y) / P;
-            double b = CrossProduct2D(v1.x - x, v1.y - y, v3.x - x, v3.y - y) / P;
-            double c = Math.Max(1 - a - b, 0);
+            double P1 = CrossProduct2D(v1.x - x, v1.y - y, v2.x - x, v2.y - y);
+            double P2 = CrossProduct2D(v1.x - x, v1.y - y, v3.x - x, v3.y - y);
+            double P3 = CrossProduct2D(v2.x - x, v2.y - y, v3.x - x, v3.y - y);
+
+            double a = P1 / (P1 + P2 + P3);
+            double b = P2 / (P1 + P2 + P3);
+            double c = P3 / (P1 + P2 + P3);
 
             double z = c * v1.z + b * v2.z + a * v3.z;
             Normal3D N = c * v1.N + b * v2.N + a * v3.N;

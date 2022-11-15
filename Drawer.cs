@@ -1,20 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
+﻿using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using System.Windows;
 using System.Windows.Controls;
 using static WpfApp1.ObjParser;
-using System.ComponentModel.Design;
 using static WpfApp1.MainWindow;
-using System.Windows.Documents;
-using System.IO.Packaging;
+using System.Collections.Generic;
 using System.Windows.Shapes;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 
 namespace WpfApp1
 {
@@ -38,6 +29,7 @@ namespace WpfApp1
         public Color defaultVertexColor;
         public bool isExtImageSet = false;
         public bool isNormalMapSet = false;
+        public List<Line> mesh;
 
         public Drawer(double _kd, double _ks, int _m, DrawOption _drawOption, Color _defaultVertexColor)
         {
@@ -56,6 +48,7 @@ namespace WpfApp1
             bitmapImage.Source = bitmap;
             drawOption = _drawOption;
             defaultVertexColor = _defaultVertexColor;
+            mesh = new List<Line>();
         }
 
         public static void Redraw(Drawer drawer, Sun sun)
@@ -76,6 +69,8 @@ namespace WpfApp1
             }
             objParser = new ObjParser();
             objParser.LoadObj(fileName, projection, defaultVertexColor);
+
+            GetMesh();
         }
         public void ProcessImage(BitmapImage bitmapImage)
         {
@@ -96,17 +91,8 @@ namespace WpfApp1
                 }
             }
 
-            if(objParser != null)
-            {
-                foreach (Vertex3D v in objParser.vertices)
-                {
-                    v.baseColor.R = extImagePixels[(int)v.y, (int)v.x, 2];
-                    v.baseColor.G = extImagePixels[(int)v.y, (int)v.x, 1];
-                    v.baseColor.B = extImagePixels[(int)v.y, (int)v.x, 0];
-                }
-            }
-            
             isExtImageSet = true;
+            UpdateVerticesColor();
         }
         public void ProcessNormalMap(BitmapImage bitmapImage)
         {
@@ -127,15 +113,39 @@ namespace WpfApp1
                 }
             }
 
-            if (objParser != null)
+            isNormalMapSet = true;
+            UpdateVerticesNormalVector();
+        }
+        public void UpdateVerticesColor()
+        {
+            if (objParser == null) return;
+            foreach(Vertex3D v in objParser.vertices)
+            { 
+                if (isExtImageSet)
+                {
+                    v.baseColor.R = extImagePixels[(int)v.y, (int)v.x, 2];
+                    v.baseColor.G = extImagePixels[(int)v.y, (int)v.x, 1];
+                    v.baseColor.B = extImagePixels[(int)v.y, (int)v.x, 0];
+                }
+                else
+                {
+                    v.baseColor.R = defaultVertexColor.R;
+                    v.baseColor.G = defaultVertexColor.G;
+                    v.baseColor.B = defaultVertexColor.B;
+                }
+            }
+        }
+        public void UpdateVerticesNormalVector()
+        {
+            if (objParser == null) return;
+            foreach (Vertex3D v in objParser.vertices)
             {
-                foreach (Vertex3D v in objParser.vertices)
+                if (isNormalMapSet)
                 {
                     Normal3D Nt = new Normal3D(
-                        ((double)extNormalMapPixels[(int)v.y, (int)v.x, 2] - 127) / 128,
-                        ((double)extNormalMapPixels[(int)v.y, (int)v.x, 1] - 127) / 128,
-                        (double)extNormalMapPixels[(int)v.y, (int)v.x, 0] / 255
-                        );
+                                ((double)extNormalMapPixels[(int)v.y, (int)v.x, 2] - 127) / 128,
+                                ((double)extNormalMapPixels[(int)v.y, (int)v.x, 1] - 127) / 128,
+                                (double)extNormalMapPixels[(int)v.y, (int)v.x, 0] / 255);
                     Normal3D B = v.N.x == 0 && v.N.y == 0 && v.N.z == 1 ? new Normal3D(0, 1, 0) : Nt * new Normal3D(0, 0, 1);
                     Normal3D T = B * v.N;
 
@@ -145,9 +155,28 @@ namespace WpfApp1
                         T.y * Nt.x + B.y * Nt.y + oldN.y * Nt.z,
                         T.z * Nt.x + B.z * Nt.y + oldN.z * Nt.z);
                 }
+                else v.N = new Normal3D(v.Nobj);
             }
+        }
+        void GetMesh()
+        {
+            if (objParser == null) return;
 
-            isNormalMapSet = true;
+            foreach(ObjParser.Polygon polygon in objParser.polygons)
+            {
+                foreach(Edge edge in polygon.edges)
+                {
+                    Line line = new Line();
+                    Panel.SetZIndex(line, 1);
+                    line.X1 = edge.u.x;
+                    line.Y1 = edge.u.y;
+                    line.X2 = edge.v.x;
+                    line.Y2 = edge.v.y;
+                    line.Stroke = Brushes.Black;
+                    line.StrokeThickness = 2;
+                    mesh.Add(line);
+                }
+            }
         }
     }
 }

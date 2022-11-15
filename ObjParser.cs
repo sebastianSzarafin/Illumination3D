@@ -1,29 +1,8 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
-using System.Diagnostics;
-//using System.Drawing;
 using System.Globalization;
 using System.IO;
-using System.IO.IsolatedStorage;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Security.Cryptography.Xml;
-using System.Text;
-using System.Threading.Tasks;
-using System.Transactions;
-using System.Windows.Controls;
-using System.Windows.Markup;
 using System.Windows.Media;
-using System.Windows.Media.Media3D;
-using System.Windows.Media.Imaging;
-//using System.Windows.Shapes;
-using static WpfApp1.ObjParser;
-using System.Windows;
-using System.Windows.Ink;
-using System.Printing.IndexedProperties;
-//using System.Windows.Shapes;
-//using System.Windows.Shapes;
 
 namespace WpfApp1
 {
@@ -103,6 +82,7 @@ namespace WpfApp1
                 for (int i = 0; i < f.vertexIndex.Length; i++)
                 {
                     vertices[f.vertexIndex[i]].N = normals[f.normalVectorIndex[i]];
+                    vertices[f.vertexIndex[i]].Nobj = new Normal3D(normals[f.normalVectorIndex[i]]);
                     _vertices.Add(vertices[f.vertexIndex[i]]);
                     _edges.Add(new Edge(vertices[f.vertexIndex[i]], vertices[f.vertexIndex[(i + 1) % f.vertexIndex.Length]]));
                 }
@@ -117,6 +97,7 @@ namespace WpfApp1
             public double y;
             public double z;
             public Normal3D N;
+            public Normal3D Nobj;
             public System.Windows.Media.Color baseColor;
             public double CR { get => (double)baseColor.R / 255; }
             public double CG { get => (double)baseColor.G / 255; }
@@ -129,6 +110,7 @@ namespace WpfApp1
                 y = _y; 
                 z = _z; 
                 N = new Normal3D(0, 0, 0);
+                Nobj = new Normal3D(0, 0, 0);
                 baseColor = _baseColor;
                 paintColor = _baseColor;
             }
@@ -144,9 +126,15 @@ namespace WpfApp1
                 y = _y; 
                 z = _z;
             }
+            public Normal3D(Normal3D N)
+            {
+                x = N.x;
+                y = N.y;
+                z = N.z;
+            }
             public void Normalize()
             {
-                double sum = Math.Abs(x) + Math.Abs(y) + Math.Abs(z);
+                double sum = Math.Sqrt(x*x + y*y + z*z);
                 if (sum != 0)
                 {
                     x /= sum;
@@ -155,7 +143,6 @@ namespace WpfApp1
                 }
             }
             public static double DotProdcut(Normal3D n1, Normal3D n2) => n1.x * n2.x + n1.y * n2.y + n1.z * n2.z;
-            //public static double DotProdcut(Normal3D n1, Normal3D n2) => -(n1.x * n2.x + n1.y * n2.y + n1.z * n2.z);
             public static Normal3D operator *(double a, Normal3D n) => new Normal3D(a * n.x, a * n.y, a * n.z);
             public static Normal3D operator *(Normal3D n1, Normal3D n2) => new Normal3D(n1.x * n2.x, n1.y * n2.y, n1.z * n2.z);
             public static Normal3D operator -(Normal3D n1, Normal3D n2) => new Normal3D(n1.x - n2.x, n1.y - n2.y, n1.z - n2.z);
