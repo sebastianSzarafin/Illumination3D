@@ -37,7 +37,7 @@ namespace WpfApp1
             sunColors.SelectedItem = typeof(Colors).GetProperty("White");
 
             // Predefined scene
-            drawer.Initialize("\\\\Mac\\Home\\Downloads\\Sphere.obj", projection, defaultVertexColor);
+            drawer.Initialize("Objects\\Sphere.obj", projection, defaultVertexColor);
             Drawer.Redraw(drawer, sun);
             //
         }
@@ -45,6 +45,7 @@ namespace WpfApp1
         void LoadFileEvent(object sender, RoutedEventArgs e)
         {
             var dialog = new Microsoft.Win32.OpenFileDialog();
+            dialog.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
             dialog.DefaultExt = ".obj";
             dialog.Filter = "Object files (.obj)|*.obj"; 
 
@@ -59,6 +60,7 @@ namespace WpfApp1
         void LoadImageEvent(object sender, RoutedEventArgs e)
         {
             var dialog = new Microsoft.Win32.OpenFileDialog();
+            dialog.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
             dialog.Filter = "Image files (*.png;*.jpeg)|*.png;*.jpeg";
 
             bool? result = dialog.ShowDialog();
@@ -75,15 +77,18 @@ namespace WpfApp1
         {
             drawer.isExtImageSet = true;
             drawer.UpdateVerticesColor();
+            Drawer.Redraw(drawer, sun);
         }
         void NotUseImageEvent(object sender, RoutedEventArgs e)
         {
             drawer.isExtImageSet = false;
             drawer.UpdateVerticesColor();
+            Drawer.Redraw(drawer, sun);
         }        
         void LoadNormalMapEvent(object sender, RoutedEventArgs e)
         {
             var dialog = new Microsoft.Win32.OpenFileDialog();
+            dialog.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
             dialog.Filter = "Image files (*.png;*.jpeg)|*.png;*.jpeg";
 
             bool? result = dialog.ShowDialog();
@@ -100,11 +105,13 @@ namespace WpfApp1
         {
             drawer.isNormalMapSet = true;
             drawer.UpdateVerticesNormalVector();
+            Drawer.Redraw(drawer, sun);
         }
         void NotUseNormalMapEvent(object sender, RoutedEventArgs e)
         {
             drawer.isNormalMapSet = false;
             drawer.UpdateVerticesNormalVector();
+            Drawer.Redraw(drawer, sun);
         }
         void XY_AxisProjEvent(object sender, RoutedEventArgs e) => projection = Projection.XY;
         void XZ_AxisProjEvent(object sender, RoutedEventArgs e) => projection = Projection.XZ;
