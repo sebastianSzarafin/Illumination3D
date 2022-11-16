@@ -74,6 +74,16 @@
 
                 <Separator/>
 
+                <Label Content="Redraw delay:"/>
+                <DockPanel VerticalAlignment="Center" Margin="10">
+                    <Slider Width="90" Maximum="100" Minimum="0" Value="0" VerticalAlignment="Center" TickFrequency="10" IsSnapToTickEnabled="True" Name="delaySlider" ValueChanged="delaySlider_ValueChanged" />
+                    <TextBlock Text="Delay: "/>
+                    <TextBlock Text="{Binding ElementName=delaySlider, Path=Value}"/>
+                    <TextBlock Text="ms"/>
+                </DockPanel>
+
+                <Separator/>
+
                 <Label Content="Sun simulation:"/>
                 <Button x:Name="sunSimulationButton" Height="20" Width="100" Margin="10" Click="SunSimulationEvent">Start simulation</Button>
                 <DockPanel VerticalAlignment="Center" Margin="10">

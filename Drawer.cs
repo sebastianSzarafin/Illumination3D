@@ -30,8 +30,9 @@ namespace WpfApp1
         public bool isExtImageSet = false;
         public bool isNormalMapSet = false;
         public List<Line> mesh;
+        public int sleepTime;
 
-        public Drawer(double _kd, double _ks, int _m, DrawOption _drawOption, Color _defaultVertexColor)
+        public Drawer(double _kd, double _ks, int _m, DrawOption _drawOption, Color _defaultVertexColor, int _sleepTime)
         {
             kd = _kd;
             ks = _ks;
@@ -49,6 +50,7 @@ namespace WpfApp1
             drawOption = _drawOption;
             defaultVertexColor = _defaultVertexColor;
             mesh = new List<Line>();
+            sleepTime = _sleepTime;
         }
 
         public static void Redraw(Drawer drawer, Sun sun)
