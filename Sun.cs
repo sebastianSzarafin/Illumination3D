@@ -47,31 +47,6 @@ namespace WpfApp1
 
             Drawer.Redraw(drawer, this);
         }
-        // Trajectory with moving on only 
-        /*List<(int x, int y)> GetTrajectory(double scale, double delta, double revolutions)
-        {
-            List<(int x, int y)> trajectory = new List<(int x, int y)>();
-            double X = centreX;
-            double Y = centreY;
-            double theta = 0;
-            double radius = 500;
-            int loops = 10;
-            while(theta <= (loops + revolutions) * 360)
-            {
-                theta += delta;
-
-                X = (radius * Math.Cos(theta / 180 * Math.PI)) + centreX;
-                Y = (radius * Math.Sin(theta / 180 * Math.PI)) + centreY;
-
-                trajectory.Add(((int)X, (int)Y));
-            }
-
-            x = trajectory[0].x;
-            y = trajectory[0].y;
-
-            return trajectory;
-        }*/
-
         // Trajectory with moving on spiral
         List<(int x, int y)> GetTrajectory(double scale, double delta, double revolutions)
         {
@@ -97,5 +72,30 @@ namespace WpfApp1
 
             return trajectory;
         }
+
+        // Trajectory with moving on only 
+        /*List<(int x, int y)> GetTrajectory(double scale, double delta, double revolutions)
+        {
+            List<(int x, int y)> trajectory = new List<(int x, int y)>();
+            double X = centreX;
+            double Y = centreY;
+            double theta = 0;
+            double radius = 500;
+            int loops = 10;
+            while(theta <= (loops + revolutions) * 360)
+            {
+                theta += delta;
+
+                X = (radius * Math.Cos(theta / 180 * Math.PI)) + centreX;
+                Y = (radius * Math.Sin(theta / 180 * Math.PI)) + centreY;
+
+                trajectory.Add(((int)X, (int)Y));
+            }
+
+            x = trajectory[0].x;
+            y = trajectory[0].y;
+
+            return trajectory;
+        }*/
     }
 }

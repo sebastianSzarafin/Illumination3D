@@ -18,7 +18,8 @@ namespace WpfApp1
     {
         static Color defaultVertexColor = Colors.Coral;
         static Color defaultSunColor = Colors.White;
-        static Drawer drawer = new Drawer(0.5, 0.5, 10, drawOption, defaultVertexColor);
+        static int sleepTime = 0;
+        static Drawer drawer = new Drawer(0.5, 0.5, 10, drawOption, defaultVertexColor, sleepTime);
         static Sun sun = new Sun(defaultSunColor, Drawer.objWidth / 2 + Drawer.offsetX, Drawer.objHeight / 2 + Drawer.offsetY, 1000, drawer);
         public static Projection projection = Projection.XY;
         public enum Projection { XY, XZ };
@@ -28,11 +29,17 @@ namespace WpfApp1
         public MainWindow()
         {
             InitializeComponent();
+
             canvas.Children.Add(drawer.bitmapImage);
             objColors.ItemsSource = typeof(Colors).GetProperties();
             objColors.SelectedItem = typeof(Colors).GetProperty("Coral");
             sunColors.ItemsSource = typeof(Colors).GetProperties();
             sunColors.SelectedItem = typeof(Colors).GetProperty("White");
+
+            // Predefined scene
+            drawer.Initialize("\\\\Mac\\Home\\Downloads\\Sphere.obj", projection, defaultVertexColor);
+            Drawer.Redraw(drawer, sun);
+            //
         }
         
         void LoadFileEvent(object sender, RoutedEventArgs e)
@@ -101,7 +108,6 @@ namespace WpfApp1
         }
         void XY_AxisProjEvent(object sender, RoutedEventArgs e) => projection = Projection.XY;
         void XZ_AxisProjEvent(object sender, RoutedEventArgs e) => projection = Projection.XZ;
-
         void kdSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             drawer.kd = kdSlider.Value;
@@ -117,14 +123,13 @@ namespace WpfApp1
             drawer.m = (int)mSlider.Value;
             Drawer.Redraw(drawer, sun);
         }
-
-        private void zSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        void delaySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) => drawer.sleepTime = (int)delaySlider.Value;
+        void zSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             sun.z = (int)zSlider.Value;
             Drawer.Redraw(drawer, sun);
         }
-
-        private void SunSimulationEvent(object sender, RoutedEventArgs e)
+        void SunSimulationEvent(object sender, RoutedEventArgs e)
         {
             if (sunSimulationButton.Content.ToString() == "Start simulation")
             {
@@ -137,34 +142,30 @@ namespace WpfApp1
                 sun.timer.Stop();
             }
         }
-
-        private void ObjColorChangedEvent(object sender, SelectionChangedEventArgs e)
+        void ObjColorChangedEvent(object sender, SelectionChangedEventArgs e)
         {
             if (drawer.objParser == null) return;
             drawer.defaultVertexColor = (Color)(objColors.SelectedItem as PropertyInfo).GetValue(null, null);
             drawer.UpdateVerticesColor();
             Drawer.Redraw(drawer, sun);
         }
-        private void SunColorChangedEvent(object sender, SelectionChangedEventArgs e)
+        void SunColorChangedEvent(object sender, SelectionChangedEventArgs e)
         {
             sun.color = (Color)(sunColors.SelectedItem as PropertyInfo).GetValue(null, null);
             Drawer.Redraw(drawer, sun);
         }
-
-        private void InterpolateDrawEvent(object sender, RoutedEventArgs e)
+        void InterpolateDrawEvent(object sender, RoutedEventArgs e)
         {
             drawOption = DrawOption.interpolate;
             drawer.drawOption = drawOption;
             Drawer.Redraw(drawer, sun);
         }
-
-        private void DesignateDrawEvent(object sender, RoutedEventArgs e)
+        void DesignateDrawEvent(object sender, RoutedEventArgs e)
         {
             drawOption = DrawOption.designate;
             drawer.drawOption = drawOption;
             Drawer.Redraw(drawer, sun);
         }
-
         void UseMeshEvent(object sender, RoutedEventArgs e)
         {
             foreach(Line line in drawer.mesh)

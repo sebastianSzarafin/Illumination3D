@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using static WpfApp1.ObjParser;
 
 namespace WpfApp1
@@ -14,7 +15,7 @@ namespace WpfApp1
             /*var watch = new Stopwatch();
             watch.Start();*/
 
-            foreach(Vertex3D v in drawer.objParser.vertices)
+            foreach (Vertex3D v in drawer.objParser.vertices)
             {
                 SetVertexColor(v, drawer, sun);
             }
@@ -43,8 +44,12 @@ namespace WpfApp1
 
             /*watch.Stop();
             Debug.WriteLine(watch.Elapsed);*/
+
+            Thread.Sleep(drawer.sleepTime);
+
+            
         }
-        public static void ScanLineFill(Polygon polygon, Drawer drawer, Sun sun, List<Edge>[] ET)
+        static void ScanLineFill(Polygon polygon, Drawer drawer, Sun sun, List<Edge>[] ET)
         {
             double ymin = double.MaxValue, ymax = double.MinValue;
             foreach (Vertex3D v in polygon.vertices)
@@ -159,7 +164,7 @@ namespace WpfApp1
 
             return buckets;
         }
-        public static void SetVertexColor(Vertex3D v, Drawer drawer, Sun sun)
+        static void SetVertexColor(Vertex3D v, Drawer drawer, Sun sun)
         {
             if (drawer.objParser == null) return;
 
@@ -182,7 +187,7 @@ namespace WpfApp1
             drawer.pixels[(int)v.y, (int)v.x, 1] = v.paintColor.G;
             drawer.pixels[(int)v.y, (int)v.x, 0] = v.paintColor.B;
         }
-        public static void SetPixelColor(double x, double y, double z, Normal3D N, Drawer drawer, Sun sun)
+        static void SetPixelColor(double x, double y, double z, Normal3D N, Drawer drawer, Sun sun)
         {
             if (drawer.objParser == null) return;
 
