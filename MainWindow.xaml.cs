@@ -145,13 +145,15 @@ namespace WpfApp1
         void ObjColorChangedEvent(object sender, SelectionChangedEventArgs e)
         {
             if (drawer.objParser == null) return;
-            drawer.defaultVertexColor = (Color)(objColors.SelectedItem as PropertyInfo).GetValue(null, null);
+            defaultVertexColor = (Color)(objColors.SelectedItem as PropertyInfo).GetValue(null, null);
+            drawer.defaultVertexColor = defaultVertexColor;
             drawer.UpdateVerticesColor();
             Drawer.Redraw(drawer, sun);
         }
         void SunColorChangedEvent(object sender, SelectionChangedEventArgs e)
         {
-            sun.color = (Color)(sunColors.SelectedItem as PropertyInfo).GetValue(null, null);
+            defaultSunColor = (Color)(sunColors.SelectedItem as PropertyInfo).GetValue(null, null);
+            sun.color = defaultSunColor;
             Drawer.Redraw(drawer, sun);
         }
         void InterpolateDrawEvent(object sender, RoutedEventArgs e)
