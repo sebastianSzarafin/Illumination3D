@@ -26,5 +26,5 @@
   
   
   ## Assumptions
-  * Displayed object has to have it's functional respresentation ($z = f(x,y)$)
+  * Displayed object has to have it's functional respresentation $z = f(x,y)$
   
