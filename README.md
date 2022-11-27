@@ -10,17 +10,13 @@ This is a project for *Computer Graphics 2022* course on Computer Science course
 ## Usage
 User may interact with an app using the menu placed in a left column of the main window which has following functionalities:
 - loading .obj file from user's computer
-- showing mesh connecting all the object's vertices 
+- showing mesh connecting all the displayed object's vertices 
 <img width="300" alt="4mesh" src="https://user-images.githubusercontent.com/74315304/204166486-da63379b-e7e5-43d3-8ccf-2d94594161a8.png">
+- overlapping the displayed object with an image
+<img width="300" alt="5image" src="https://user-images.githubusercontent.com/74315304/204166621-c13a4db0-48c4-49c3-9a6d-9f64248cb048.png">
+- changing the displayed object's normal map
+<img width="300" alt="6normalmap" src="https://user-images.githubusercontent.com/74315304/204166656-820911d0-4d88-4835-878b-a649742ea35a.png">
 
-  
-  
-  
-  
-  
-  
-  
-  
   
   
   ## Assumptions
