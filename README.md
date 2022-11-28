@@ -18,7 +18,7 @@ User may interact with an app using the menu placed in a left column of the main
 <img width="300" alt="6normalmap" src="https://user-images.githubusercontent.com/74315304/204166656-820911d0-4d88-4835-878b-a649742ea35a.png">
 - changing parameters used in painting the displayed object (more info in <b>Painting</b> section)
 - changing the speed of displayed object redraw method
-- playing/pausing the sun simulation and also modyfying it's height (*z* coordinate)
+- playing/pausing the sun simulation and also modyfying it's height *z* coordinate)
   
   
   ## Assumptions
