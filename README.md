@@ -16,10 +16,10 @@ User may interact with an app using the menu placed in a left column of the main
 <img width="300" alt="5image" src="https://user-images.githubusercontent.com/74315304/204166621-c13a4db0-48c4-49c3-9a6d-9f64248cb048.png">
 - changing the displayed object's normal map
 <img width="300" alt="6normalmap" src="https://user-images.githubusercontent.com/74315304/204166656-820911d0-4d88-4835-878b-a649742ea35a.png">
-- changing parameters used in painting the displayed object (more info in <b>Painting</b> section)
-- changing the speed of displayed object redraw method
-- playing/pausing the sun simulation and also modyfying it's height (z coordinate)
-- setting the displayed object's and sun's base color
+- changing parameters used in painting the displayed object (more info in <b>Painting</b> section) <br>
+- changing the speed of displayed object redraw method <br>
+- playing/pausing the sun simulation and also modyfying it's height (z coordinate) <br>
+- setting the displayed object's and sun's base color <br>
 - switching between 2 ways of calculating pixel's color (more info in <b>Algorithm</b> section)
 <p float="left">
 <img width="200" alt="2interpolation" title="Interpolation" src="https://user-images.githubusercontent.com/74315304/204167449-5258c220-748e-4d62-a426-e12b475895e7.png">
