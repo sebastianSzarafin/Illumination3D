@@ -22,9 +22,9 @@ User may interact with an app using the menu placed in a left column of the main
 - setting the displayed object's and sun's base color
 - switching between 2 ways of calculating pixel's color (more info in <b>Algorithm</b> section)
 <p float="left">
-<img width="300" alt="2interpolation" title="Interpolation" src="https://user-images.githubusercontent.com/74315304/204167449-5258c220-748e-4d62-a426-e12b475895e7.png">
+<img width="200" alt="2interpolation" title="Interpolation" src="https://user-images.githubusercontent.com/74315304/204167449-5258c220-748e-4d62-a426-e12b475895e7.png">
 &nbsp&nbsp&nbsp&nbsp
-<img width="300" alt="3explicit" title="Explicit designation" src="https://user-images.githubusercontent.com/74315304/204167453-0715b918-c416-4d42-bb5e-01bfa4c254c4.png">
+<img width="200" alt="3explicit" title="Explicit designation" src="https://user-images.githubusercontent.com/74315304/204167453-0715b918-c416-4d42-bb5e-01bfa4c254c4.png">
  <p>
   
   ## Assumptions
