@@ -32,8 +32,9 @@ User may interact with an app using the menu placed in a left column of the main
    
  ---
 ## Painting
-//TODO
-   
+The app has implemented 2 models of pixel shading:
+ - Gouraud (fast, but has unrealistic specular reflections)
+ - Phong (expensive, but gives decent effects)
    
 ---
 ## Algorithm
